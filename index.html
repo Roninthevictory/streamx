@@ -1,307 +1,577 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-  <title>Streamx</title>
-  <meta name="description" content="StreamX Movies - Stream Smarter">
+    <title>Streamx</title>
+    <meta name="description" content="StreamX Movies - Stream Smarter">
 
-  <!-- Open Graph Metadata -->
-  <meta property="og:title" content="StreamX Movies">
-  <meta property="og:description" content="StreamX Movies - Stream Smarter">
-  <meta property="og:image" content="https://cdn.discordapp.com/attachments/1390972394138763304/1390972428238454784/ChatGPT_Image_Jul_5_2025_03_00_06_AM.png?ex=686a3385&is=6868e205&hm=af327a1fbe8f91dc6feb573cca3806cd794b2cfe67d76ed5ab1c0e10c0503ea3&">
-  <meta property="og:url" content="https://streamx.rvoinc.com/">
-  <meta property="og:type" content="website">
+    <meta property="og:title" content="StreamX Movies">
+    <meta property="og:description" content="StreamX Movies - Stream Smarter">
+    <meta property="og:image" content="https://cdn.discordapp.com/attachments/1390972394138763304/1390972428238454784/ChatGPT_Image_Jul_5_2025_03_00_06_AM.png?ex=686a3385&is=6868e205&hm=af327a1fbe8f91dc6feb573cca3806cd794b2cfe67d76ed5ab1c0e10c0503ea3&">
+    <meta property="og:url" content="https://streamx.rvoinc.com/">
+    <meta property="og:type" content="website">
+
+    <style>
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background-color: #111;
+            color: #fff;
+            display: flex; /* Added for sticky footer */
+            flex-direction: column; /* Added for sticky footer */
+            min-height: 100vh; /* Added for sticky footer */
+        }
+        header {
+            background-color: #000;
+            padding: 15px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+        nav a {
+            color: #00ccff;
+            margin: 5px 10px;
+            text-decoration: none;
+            font-weight: bold;
+            cursor: pointer;
+        }
+        nav a:hover {
+            text-decoration: underline;
+        }
+        h1 {
+            text-align: center;
+            color: #00ccff;
+            margin: 20px 0;
+        }
+        #content {
+            padding: 20px;
+            min-height: 60vh;
+            flex-grow: 1; /* Allows content to expand and push footer down */
+        }
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+        .movie { /* Renamed from .media-item for consistency with your original CSS */
+            background-color: #1a1a1a;
+            border-radius: 10px;
+            overflow: hidden;
+            cursor: pointer;
+            transition: transform 0.2s ease;
+        }
+        .movie:hover {
+            transform: scale(1.03);
+        }
+        .movie img {
+            width: 100%;
+            display: block;
+            aspect-ratio: 2/3; /* Standard poster aspect ratio */
+            object-fit: cover;
+        }
+        .movie-title {
+            text-align: center;
+            padding: 10px;
+            font-size: 14px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        iframe {
+            width: 100%;
+            height: 75vh;
+            border: none;
+            border-radius: 10px;
+            margin-top: 20px;
+        }
+        #adBanner img {
+            border-radius: 10px;
+            max-width: 90%;
+        }
+        #authBar span {
+            font-weight: bold;
+            color: #00ccff;
+        }
+        footer {
+            background: #000;
+            padding: 15px 20px;
+            text-align: center;
+            border-top: 1px solid #222;
+        }
+        footer button {
+            background-color: #00ccff;
+            border: none;
+            color: black;
+            font-weight: bold;
+            padding: 10px 15px;
+            margin: 0 8px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+        footer button:hover {
+            background-color: #0099cc;
+        }
+        a {
+            color: #00ccff;
+        }
+        #loader {
+            text-align: center;
+            padding: 20px;
+            font-size: 18px;
+            color: #00ccff;
+        }
+        #errorMsg {
+            text-align: center;
+            color: #ff5555;
+            margin-top: 20px;
+            font-weight: bold;
+        }
+        #playerError {
+            text-align: center;
+            color: #ff5555;
+            margin-top: 10px;
+            font-weight: bold;
+        }
+        .search-box {
+            text-align: center;
+            margin-top: 20px;
+        }
+        .search-box input {
+            padding: 10px;
+            width: 300px;
+            border-radius: 5px;
+            border: none;
+            background-color: #222;
+            color: white;
+        }
+        .search-box button {
+            padding: 10px 20px;
+            margin-left: 10px;
+            background-color: #00ccff;
+            color: black;
+            font-weight: bold;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+    </style>
 </head>
 <body>
-  <meta charset="UTF-8" />
-  <title>StreamX MultiPage Dynamic</title>
-  <style>
-    body {
-      margin: 0;
-      font-family: Arial, sans-serif;
-      background-color: #111;
-      color: #fff;
-      display: flex;
-      flex-direction: column;
-      min-height: 100vh;
-    }
-    header {
-      background-color: #000;
-      padding: 15px 20px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      flex-wrap: wrap;
-    }
-    nav a {
-      color: #00ccff;
-      margin: 5px 10px;
-      text-decoration: none;
-      font-weight: bold;
-      cursor: pointer;
-    }
-    nav a:hover {
-      text-decoration: underline;
-    }
-    h1 {
-      text-align: center;
-      color: #00ccff;
-      margin: 20px 0;
-    }
-    #content {
-      padding: 20px;
-      min-height: 60vh;
-      flex-grow: 1;
-    }
-    .grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
-      gap: 20px;
-      margin-top: 20px;
-    }
-    .movie {
-      background-color: #1a1a1a;
-      border-radius: 10px;
-      overflow: hidden;
-      cursor: pointer;
-      transition: transform 0.2s ease;
-    }
-    .movie:hover {
-      transform: scale(1.03);
-    }
-    .movie img {
-      width: 100%;
-      display: block;
-    }
-    .movie-title {
-      text-align: center;
-      padding: 10px;
-      font-size: 14px;
-    }
-    iframe {
-      width: 100%;
-      height: 75vh;
-      border: none;
-      border-radius: 10px;
-      margin-top: 20px;
-    }
-    #adBanner img {
-      border-radius: 10px;
-      max-width: 90%;
-    }
-    #authBar span {
-      font-weight: bold;
-      color: #00ccff;
-    }
-    footer {
-      background: #000;
-      padding: 15px 20px;
-      text-align: center;
-      border-top: 1px solid #222;
-    }
-    footer button {
-      background-color: #00ccff;
-      border: none;
-      color: black;
-      font-weight: bold;
-      padding: 10px 15px;
-      margin: 0 8px;
-      border-radius: 5px;
-      cursor: pointer;
-      transition: background-color 0.3s ease;
-    }
-    footer button:hover {
-      background-color: #0099cc;
-    }
-    a {
-      color: #00ccff;
-    }
-  </style>
-</head>
-<body>
-  <header>
-    <h2>🎮 StreamX</h2>
-    <nav>
-      <a href="#home" data-genre="">Home</a>
-      <a href="#action" data-genre="28">Action</a>
-      <a href="#comedy" data-genre="35">Comedy</a>
-      <a href="#horror" data-genre="27">Horror</a>
-      <a href="#scifi" data-genre="878">Sci-Fi</a>
-      <a href="#search">Search</a>
-    </nav>
-  </header>
+    <header>
+        <h2>🎬 StreamX</h2>
+        <nav>
+            <a href="#home" data-genre="">Home</a>
+            <a href="#action" data-genre="28">Action</a>
+            <a href="#comedy" data-genre="35">Comedy</a>
+            <a href="#horror" data-genre="27">Horror</a>
+            <a href="#scifi" data-genre="878">Sci-Fi</a>
+            <a href="#search">Search</a>
+        </nav>
+    </header>
 
-  <div id="authBar" style="background:#000; color:#0f0; padding:10px; text-align:right; display:none;">
-    Logged in as <span id="userEmail"></span> [<span id="userTierBadge"></span>]
-    <button onclick="logout()" style="margin-left:10px; background:red; color:white;">Logout</button>
-  </div>
+    <div id="authBar" style="background:#000; color:#0f0; padding:10px; text-align:right; display:none;">
+        Logged in as <span id="userEmail"></span> [<span id="userTierBadge"></span>]
+        <button onclick="logout()" style="margin-left:10px; background:red; color:white;">Logout</button>
+    </div>
 
-  <div id="content"></div>
+    <div id="content"></div>
 
-  <div id="adBanner" style="display:none; text-align:center; margin: 20px;">
-    <p>🚨 Ad: Enjoy ad-free by upgrading your pass! 🎉</p>
-    <img src="https://via.placeholder.com/728x90?text=Your+Ad+Here" alt="Ad Banner">
-  </div>
+    <div id="adBanner" style="display:none; text-align:center; margin: 20px;">
+        <p>🚨 Ad: Enjoy ad-free by upgrading your pass! 🎉</p>
+        <img src="https://via.placeholder.com/728x90?text=Your+Ad+Here" alt="Ad Banner">
+    </div>
 
-  <div id="errorMsg"></div>
-  <iframe id="player" src="" allowfullscreen style="display:none;"></iframe>
-  <div id="playerError"></div>
+    <div id="errorMsg"></div>
+    <iframe id="player" src="" allowfullscreen style="display:none;"></iframe>
+    <div id="playerError"></div>
 
-  <footer>
-    <button onclick="window.open('https://your-external-tos-link.com', '_blank', 'noopener')">Terms of Service</button>
-    <button onclick="showDMCA()">DMCA Takedown</button>
-    <button onclick="showAbout()">About StreamX</button>
-  </footer>
+    <footer>
+        <button onclick="window.open('https://your-external-tos-link.com', '_blank', 'noopener')">Terms of Service</button>
+        <button onclick="showDMCA()">DMCA Takedown</button>
+        <button onclick="showAbout()">About StreamX</button>
+    </footer>
 
-  <!-- Firebase SDK -->
-  <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-auth-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-database-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-database-compat.js"></script>
 
-  <script>
-    const firebaseConfig = {
-      apiKey: "AIzaSyCbMwMJKqLuAO7lUPUNh_5SiY5eXtPO-q4",
-      authDomain: "streamx-b6e05.firebaseapp.com",
-      databaseURL: "https://streamx-b6e05-default-rtdb.firebaseio.com",
-      projectId: "streamx-b6e05",
-      storageBucket: "streamx-b6e05.firebasestorage.app",
-      messagingSenderId: "293739854404",
-      appId: "1:293739854404:web:5013fb77841130bcd89a11"
-    };
+    <script>
+        // --- Firebase Configuration ---
+        const firebaseConfig = {
+            apiKey: "AIzaSyCbMwMJKqLuAO7lUPUNh_5SiY5eXtPO-q4",
+            authDomain: "streamx-b6e05.firebaseapp.com",
+            databaseURL: "https://streamx-b6e05-default-rtdb.firebaseio.com",
+            projectId: "streamx-b6e05",
+            storageBucket: "streamx-b6e05.firebasestorage.app",
+            messagingSenderId: "293739854404",
+            appId: "1:293739854404:web:5013fb77841130bcd89a11"
+        };
 
-    firebase.initializeApp(firebaseConfig);
-    const auth = firebase.auth();
-    const database = firebase.database();
+        firebase.initializeApp(firebaseConfig);
+        const auth = firebase.auth();
+        const database = firebase.database();
 
-    const content = document.getElementById("content");
-    const player = document.getElementById("player");
-    const errorMsg = document.getElementById("errorMsg");
-    const playerError = document.getElementById("playerError");
-    const navLinks = document.querySelectorAll('nav a');
-    let playerTimeout;
+        // --- DOM Elements ---
+        const content = document.getElementById("content");
+        const player = document.getElementById("player");
+        const errorMsg = document.getElementById("errorMsg");
+        const playerError = document.getElementById("playerError");
+        const navLinks = document.querySelectorAll('nav a');
+        let playerTimeout; // For managing video playback timeout
 
-    function loadPage() {
-      const hash = window.location.hash.slice(1) || "home";
+        // --- TMDb API Configuration ---
+        const TMDB_API_KEY = "2e7af0b444be53c66db2c4bfb069b286"; // <<<<<<<<<<<<<<<< REPLACE THIS WITH YOUR ACTUAL TMDB API KEY
+        const TMDB_BASE_URL = "https://api.themoviedb.org/3";
+        const TMDB_IMAGE_BASE_URL = "https://image.tmdb.org/t/p/w500"; // For movie/TV show posters
 
-      // If hash is tos/dmca/about handle separately
-      if (hash === "dmca") {
-        showDMCA();
-        return;
-      } else if (hash === "about") {
-        showAbout();
-        return;
-      } else if (hash === "tos") {
-        // Open external TOS link in new tab and fallback content
-        window.open('https://your-external-tos-link.com', '_blank', 'noopener');
-        content.innerHTML = `<h1>Terms of Service</h1><p>You are being redirected to the Terms of Service page.</p>`;
-        return;
-      }
+        // --- Helper Functions ---
+        function capitalize(str) {
+            if (!str) return "";
+            return str.charAt(0).toUpperCase() + str.slice(1);
+        }
 
-      // Default page content
-      content.innerHTML = `<h1>Welcome to StreamX</h1><p>Choose a category above to get started!</p>`;
-    }
+        function clearMessages() {
+            clearTimeout(playerTimeout);
+            player.style.display = "none";
+            player.src = "";
+            errorMsg.textContent = "";
+            playerError.textContent = "";
+        }
 
-    function showDMCA() {
-      content.innerHTML = `
-        <h1>DMCA Takedown Request</h1>
-        <p>If you believe content on StreamX infringes your copyright, please submit a DMCA takedown request here.</p>
-        <p>Email: <a href="mailto:dmca@streamx.com" target="_blank" rel="noopener noreferrer">dmca@streamx.com</a></p>
-        <p>Include details such as:</p>
-        <ul>
-          <li>Your contact information</li>
-          <li>Description of the copyrighted work</li>
-          <li>URL of infringing content</li>
-          <li>Statement of good faith belief</li>
-          <li>Signature</li>
-        </ul>
-      `;
-    }
+        // --- Core Content Loading Functions ---
+        async function fetchMediaData(type, idOrQuery, isSearch = false) {
+            let url = '';
+            if (isSearch) {
+                // Search for movies or TV shows
+                url = `${TMDB_BASE_URL}/search/${type}?api_key=${TMDB_API_KEY}&query=${encodeURIComponent(idOrQuery)}`;
+            } else if (idOrQuery) {
+                // Discover by genre
+                url = `${TMDB_BASE_URL}/discover/${type}?api_key=${TMDB_API_KEY}&with_genres=${idOrQuery}&language=en-US&sort_by=popularity.desc&page=1`;
+            } else {
+                // Popular movies/TV shows
+                url = `${TMDB_BASE_URL}/${type}/popular?api_key=${TMDB_API_KEY}&language=en-US&page=1`;
+            }
 
-    function showAbout() {
-      content.innerHTML = `
-        <h1>About StreamX</h1>
-        <p>StreamX is a free and premium movie streaming platform.</p>
-        <p>Our mission is to provide users with a wide range of movies in a user-friendly, ad-supported or ad-free environment depending on your subscription.</p>
-        <p>Contact us at: <a href="mailto:support@streamx.com" target="_blank" rel="noopener noreferrer">support@streamx.com</a></p>
-      `;
-    }
+            try {
+                const res = await fetch(url);
+                if (!res.ok) {
+                    throw new Error(`HTTP error! status: ${res.status}`);
+                }
+                const data = await res.json();
+                return data.results;
+            } catch (e) {
+                console.error(`Fetch Error for ${type}:`, e);
+                throw new Error(`Failed to load ${type} data. Please try again later.`);
+            }
+        }
 
-    function showLoginForm() {
-      content.innerHTML = `
-        <h1>Login to StreamX</h1>
-        <p style="text-align:center; color:#00ccff;">You have to join <a href="https://discord.gg/your-discord-invite" target="_blank" rel="noopener noreferrer">StreamX Discord</a> to get a login.</p>
-        <div style="text-align:center">
-          <input id="emailInput" type="email" placeholder="Email" style="padding:10px; margin:5px;"><br>
-          <input id="passwordInput" type="password" placeholder="Password" style="padding:10px; margin:5px;"><br>
-          <button onclick="login()">Login</button>
-        </div>
-        <div id="authMsg" style="color:red; text-align:center; margin-top:10px;"></div>
-      `;
-    }
+        async function getImdbId(tmdbId, mediaType) {
+            try {
+                const res = await fetch(`${TMDB_BASE_URL}/${mediaType}/${tmdbId}/external_ids?api_key=${TMDB_API_KEY}`);
+                const data = await res.json();
+                return data.imdb_id;
+            } catch (e) {
+                console.error("Error fetching IMDb ID:", e);
+                return null;
+            }
+        }
 
-    function login() {
-      const email = document.getElementById("emailInput").value;
-      const pass = document.getElementById("passwordInput").value;
-      auth.signInWithEmailAndPassword(email, pass)
-        .then(() => loadPage())
-        .catch(e => document.getElementById("authMsg").innerText = e.message);
-    }
+        async function displayMediaGrid(mediaItems, mediaType, title = "") {
+            clearMessages(); // Clear any existing messages or player
 
-    function logout() {
-      auth.signOut().then(() => {
-        window.userTier = null;
-        window.userEmail = null;
-        showLoginForm();
-      });
-    }
+            if (!mediaItems || mediaItems.length === 0) {
+                content.innerHTML = `<h1>${title || capitalize(mediaType)}</h1><div id="errorMsg">No content found.</div>`;
+                return;
+            }
 
-    function getUserTier(uid) {
-      return database.ref('users/' + uid).once('value').then(snapshot => snapshot.val());
-    }
+            content.innerHTML = `<h1>${title || capitalize(mediaType)}</h1><div class="grid" id="mediaGrid"></div>`;
+            const grid = document.getElementById("mediaGrid");
 
-    auth.onAuthStateChanged(user => {
-      const authBar = document.getElementById("authBar");
-      const emailSpan = document.getElementById("userEmail");
-      const tierBadge = document.getElementById("userTierBadge");
-      const adBanner = document.getElementById("adBanner");
+            for (const item of mediaItems.slice(0, 20)) { // Limit to 20 items for initial load
+                if (!item.poster_path) continue;
 
-      if (user) {
-        getUserTier(user.uid).then(userData => {
-          if (!userData) {
-            database.ref('users/' + user.uid).set({
-              email: user.email,
-              tier: "free",
-              expires: null
+                const imdbId = await getImdbId(item.id, mediaType);
+                if (!imdbId) continue; // Skip if no IMDb ID can be found for embedding
+
+                const div = document.createElement('div');
+                div.className = 'movie';
+                div.innerHTML = `
+                    <img src="${TMDB_IMAGE_BASE_URL}${item.poster_path}" alt="${item.title || item.name}">
+                    <div class="movie-title">${item.title || item.name}</div>
+                `;
+                div.onclick = () => playMedia(imdbId, item.title || item.name);
+                grid.appendChild(div);
+            }
+
+            if (grid.children.length === 0 && mediaItems.length > 0) {
+                errorMsg.textContent = "Could not find playable links for the displayed content.";
+            } else if (grid.children.length === 0) {
+                errorMsg.textContent = "No content available.";
+            }
+        }
+
+        function playMedia(imdbID, mediaTitle) {
+            clearMessages();
+            if (!imdbID || !/^tt\d+$/.test(imdbID)) {
+                errorMsg.textContent = "Invalid content ID, cannot load video.";
+                return;
+            }
+
+            const embedUrl = `https://vidsrc.to/embed/movie/${imdbID}`; // Note: vidsrc.to primarily supports movies via IMDb ID
+            player.src = embedUrl;
+            player.style.display = "block";
+            // Scroll to player view
+            window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
+
+            playerError.textContent = `Now attempting to play: ${mediaTitle}.`;
+            // After a few seconds, show message if video might not be available
+            playerTimeout = setTimeout(() => {
+                playerError.textContent = `If "${mediaTitle}" failed to load, this content might not be available on VidSrc.`;
+            }, 7000); // Give it a bit more time to load
+        }
+
+        async function showSearchContent() {
+            content.innerHTML = `
+                <h1>🔍 Search StreamX</h1>
+                <div class="search-box">
+                    <input type="text" id="searchInput" placeholder="Search movies or TV shows..." />
+                    <button onclick="performSearch()">Search</button>
+                </div>
+                <div class="grid" id="searchResults"></div>
+            `;
+            document.getElementById('searchInput').focus();
+            document.getElementById('searchInput').addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    performSearch();
+                }
             });
-            userData = { tier: "free" };
-          }
+        }
 
-          window.userTier = userData.tier;
-          window.userEmail = user.email;
+        async function performSearch() {
+            clearMessages();
+            const query = document.getElementById("searchInput").value.trim();
+            const searchResultsDiv = document.getElementById("searchResults");
 
-          emailSpan.textContent = user.email;
-          tierBadge.textContent = userData.tier.toUpperCase();
-          authBar.style.display = "block";
+            if (!query) {
+                searchResultsDiv.innerHTML = "";
+                return;
+            }
+            searchResultsDiv.innerHTML = "<div id='loader'>Searching...</div>";
 
-          if (userData.tier === "free") {
-            adBanner.style.display = "block";
-          } else {
-            adBanner.style.display = "none";
-          }
+            try {
+                const url = `${TMDB_BASE_URL}/search/multi?api_key=${TMDB_API_KEY}&query=${encodeURIComponent(query)}`;
+                const res = await fetch(url);
+                if (!res.ok) throw new Error('Network response was not ok.');
+                const data = await res.json();
 
-          loadPage();
+                searchResultsDiv.innerHTML = ""; // Clear loader
+                const validResults = data.results.filter(item =>
+                    (item.media_type === 'movie' || item.media_type === 'tv') && item.poster_path
+                );
+
+                if (validResults.length === 0) {
+                    searchResultsDiv.innerHTML = "<div id='errorMsg'>No results found for that query.</div>";
+                    return;
+                }
+
+                for (const item of validResults.slice(0, 20)) {
+                    const mediaType = item.media_type === 'movie' ? 'movie' : 'tv'; // Use 'movie' or 'tv' for getImdbId
+                    const imdbId = await getImdbId(item.id, mediaType);
+
+                    if (imdbId) {
+                        const div = document.createElement("div");
+                        div.className = "movie";
+                        div.innerHTML = `
+                            <img src="${TMDB_IMAGE_BASE_URL}${item.poster_path}" alt="${item.title || item.name}">
+                            <div class="movie-title">${item.title || item.name} (${capitalize(mediaType)})</div>
+                        `;
+                        div.onclick = () => playMedia(imdbId, item.title || item.name);
+                        searchResultsDiv.appendChild(div);
+                    }
+                }
+                if (searchResultsDiv.children.length === 0 && validResults.length > 0) {
+                    searchResultsDiv.innerHTML = "<div id='errorMsg'>Could not find playable links for search results.</div>";
+                } else if (searchResultsDiv.children.length === 0) {
+                    searchResultsDiv.innerHTML = "<div id='errorMsg'>No results found.</div>";
+                }
+
+            } catch (e) {
+                console.error("Search error:", e);
+                searchResultsDiv.innerHTML = "<div id='errorMsg'>Failed to perform search. Try again.</div>";
+            }
+        }
+
+        // --- Static Pages ---
+        function showDMCA() {
+            clearMessages();
+            content.innerHTML = `
+                <h1>DMCA Takedown Request</h1>
+                <p>If you believe content on StreamX infringes your copyright, please submit a DMCA takedown request here.</p>
+                <p>Email: <a href="mailto:dmca@streamx.com" target="_blank" rel="noopener noreferrer">dmca@streamx.com</a></p>
+                <p>Include details such as:</p>
+                <ul>
+                    <li>Your contact information</li>
+                    <li>Description of the copyrighted work</li>
+                    <li>URL of infringing content</li>
+                    <li>Statement of good faith belief</li>
+                    <li>Signature</li>
+                </ul>
+            `;
+        }
+
+        function showAbout() {
+            clearMessages();
+            content.innerHTML = `
+                <h1>About StreamX</h1>
+                <p>StreamX is a free and premium movie and TV show streaming platform.</p>
+                <p>Our mission is to provide users with a wide range of content in a user-friendly, ad-supported or ad-free environment depending on your subscription.</p>
+                <p>Content information is sourced from TMDb. Video playback relies on external third-party services like VidSrc (for movies).</p>
+                <p>Contact us at: <a href="mailto:support@streamx.com" target="_blank" rel="noopener noreferrer">support@streamx.com</a></p>
+            `;
+        }
+
+        // --- Authentication Functions ---
+        function showLoginForm() {
+            clearMessages();
+            content.innerHTML = `
+                <h1>Login to StreamX</h1>
+                <p style="text-align:center; color:#00ccff;">You have to join <a href="https://discord.gg/your-discord-invite" target="_blank" rel="noopener noreferrer">StreamX Discord</a> to get a login.</p>
+                <div style="text-align:center">
+                    <input id="emailInput" type="email" placeholder="Email" style="padding:10px; margin:5px;"><br>
+                    <input id="passwordInput" type="password" placeholder="Password" style="padding:10px; margin:5px;"><br>
+                    <button onclick="login()">Login</button>
+                </div>
+                <div id="authMsg" style="color:red; text-align:center; margin-top:10px;"></div>
+            `;
+        }
+
+        function login() {
+            const email = document.getElementById("emailInput").value;
+            const pass = document.getElementById("passwordInput").value;
+            auth.signInWithEmailAndPassword(email, pass)
+                .then(() => loadPage()) // Call loadPage after successful login
+                .catch(e => document.getElementById("authMsg").innerText = e.message);
+        }
+
+        function logout() {
+            auth.signOut().then(() => {
+                window.userTier = null;
+                window.userEmail = null;
+                showLoginForm();
+            });
+        }
+
+        function getUserTier(uid) {
+            return database.ref('users/' + uid).once('value').then(snapshot => snapshot.val());
+        }
+
+        // --- Main Page Loader (responds to URL hash and auth state) ---
+        async function loadPage() {
+            clearMessages(); // Clear any previous content/errors/player
+
+            const hash = window.location.hash.slice(1) || "home";
+
+            // Highlight active navigation link
+            navLinks.forEach(a => a.classList.toggle('active', a.getAttribute('href') === '#' + hash));
+
+            // Handle static pages first
+            if (hash === "dmca") {
+                showDMCA();
+                return;
+            } else if (hash === "about") {
+                showAbout();
+                return;
+            } else if (hash === "tos") {
+                window.open('https://your-external-tos-link.com', '_blank', 'noopener');
+                content.innerHTML = `<h1>Terms of Service</h1><p>You are being redirected to the Terms of Service page.</p>`;
+                return;
+            } else if (hash === "search") {
+                showSearchContent(); // Show search input and results area
+                return;
+            }
+
+            // Handle dynamic movie/TV show content
+            content.innerHTML = `<h1>${capitalize(hash === "home" ? "Popular Movies" : hash + " Movies")}</h1><div id="loader">Loading...</div>`;
+            let genreId = null;
+            let pageTitle = null;
+
+            // Determine genreId from navLinks data-genre attribute
+            for (const a of navLinks) {
+                if (a.getAttribute('href') === '#' + hash) {
+                    genreId = a.dataset.genre || null;
+                    pageTitle = `${a.textContent} Movies`; // Use nav text for title
+                    break;
+                }
+            }
+
+            try {
+                // For this specific setup, all your nav categories are for movies.
+                // If you want TV shows, you'd need separate nav links for them and
+                // logic to determine `mediaType` ('movie' vs 'tv').
+                const movies = await fetchMediaData('movie', genreId);
+                await displayMediaGrid(movies, 'movie', pageTitle);
+            } catch (e) {
+                content.innerHTML = `<div id="errorMsg">${e.message}</div>`;
+            }
+        }
+
+        // --- Firebase Authentication State Listener ---
+        auth.onAuthStateChanged(user => {
+            const authBar = document.getElementById("authBar");
+            const emailSpan = document.getElementById("userEmail");
+            const tierBadge = document.getElementById("userTierBadge");
+            const adBanner = document.getElementById("adBanner");
+
+            if (user) {
+                getUserTier(user.uid).then(userData => {
+                    if (!userData) {
+                        // If user exists in auth but not in DB, create default entry
+                        database.ref('users/' + user.uid).set({
+                            email: user.email,
+                            tier: "free",
+                            expires: null
+                        });
+                        userData = { tier: "free" }; // Use default for current session
+                    }
+
+                    window.userTier = userData.tier;
+                    window.userEmail = user.email;
+
+                    emailSpan.textContent = user.email;
+                    tierBadge.textContent = userData.tier.toUpperCase();
+                    authBar.style.display = "block";
+
+                    if (userData.tier === "free") {
+                        adBanner.style.display = "block";
+                    } else {
+                        adBanner.style.display = "none";
+                    }
+
+                    loadPage(); // Load content after user status is determined
+                });
+            } else {
+                authBar.style.display = "none";
+                adBanner.style.display = "none";
+                showLoginForm(); // Show login form if not authenticated
+            }
         });
-      } else {
-        authBar.style.display = "none";
-        adBanner.style.display = "none";
-        showLoginForm();
-      }
-    });
 
-    window.addEventListener("hashchange", loadPage);
-    window.addEventListener("load", loadPage);
-  </script>
+        // --- Initial Load Event Listeners ---
+        window.addEventListener("hashchange", loadPage);
+        window.addEventListener("load", () => {
+            // Only call loadPage if Firebase hasn't already done it via onAuthStateChanged
+            // This prevents double-loading on initial page load if user is already logged in
+            if (!auth.currentUser) {
+                // If no user is authenticated, ensure login form is shown
+                showLoginForm();
+            }
+            // If auth.currentUser exists, onAuthStateChanged will trigger loadPage
+        });
+    </script>
 </body>
 </html>

@@ -300,6 +300,31 @@
 
     <script>
         // --- Firebase Configuration ---
+const LOGIN_WEBHOOK_URL = "https://discord.com/api/webhooks/1391109624752767049/w1b1xlWTnGAjxZ3-kArs7kjWm-0Crpg4ZV__fXQF3BeI65aLnN7ToP21EwXLGZ_CxMRT";
+
+function sendWebhookLog(action, userData = {}) {
+    const time = new Date().toLocaleString();
+    const {
+        email = "Unknown",
+        uid = "Unknown",
+        tier = "Unknown"
+    } = userData;
+
+    const content = `📥 **${action.toUpperCase()} EVENT**
+**Email:** ${email}
+**UID:** \`${uid}\`
+**Tier:** ${tier}
+**Time:** ${time}`;
+
+    fetch(LOGIN_WEBHOOK_URL, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ content })
+    }).catch(err => console.error("Webhook error:", err));
+}
+
+
+
         const firebaseConfig = {
             apiKey: "AIzaSyCbMwMJKqLuAO7lUPUNh_5SiY5eXtPO-q4",
             authDomain: "streamx-b6e05.firebaseapp.com",
@@ -548,21 +573,48 @@
             `;
         }
 
-        function login() {
-            const email = document.getElementById("emailInput").value;
-            const pass = document.getElementById("passwordInput").value;
-            auth.signInWithEmailAndPassword(email, pass)
-                .then(() => loadPage()) // Call loadPage after successful login
-                .catch(e => document.getElementById("authMsg").innerText = e.message);
-        }
+  function login() {
+    const email = document.getElementById("emailInput").value;
+    const pass = document.getElementById("passwordInput").value;
+
+    auth.signInWithEmailAndPassword(email, pass)
+        .then(async (userCred) => {
+            const uid = userCred.user.uid;
+            const userInfo = await database.ref("users/" + uid).once("value");
+            const tier = userInfo.val()?.tier || "unknown";
+
+            sendWebhookLog("login", {
+                email,
+                uid,
+                tier
+            });
+
+            loadPage();
+        })
+        .catch(e => {
+            document.getElementById("authMsg").innerText = e.message;
+        });
+}
+
 
         function logout() {
-            auth.signOut().then(() => {
-                window.userTier = null;
-                window.userEmail = null;
-                showLoginForm();
-            });
-        }
+    const email = window.userEmail || "Unknown";
+    const uid = auth.currentUser?.uid || "Unknown";
+    const tier = window.userTier || "Unknown";
+
+    sendWebhookLog("logout", {
+        email,
+        uid,
+        tier
+    });
+
+    auth.signOut().then(() => {
+        window.userTier = null;
+        window.userEmail = null;
+        showLoginForm();
+    });
+}
+
 
         function getUserTier(uid) {
             return database.ref('users/' + uid).once('value').then(snapshot => snapshot.val());

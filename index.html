@@ -69,45 +69,13 @@
       border-radius: 10px;
       margin-top: 20px;
     }
-    .search-box {
-      text-align: center;
-      margin-top: 20px;
+    #adBanner img {
+      border-radius: 10px;
+      max-width: 90%;
     }
-    .search-box input {
-      padding: 10px;
-      width: 300px;
-      border-radius: 5px;
-      border: none;
-      background-color: #222;
-      color: white;
-    }
-    .search-box button {
-      padding: 10px 20px;
-      margin-left: 10px;
-      background-color: #00ccff;
-      color: black;
+    #authBar span {
       font-weight: bold;
-      border: none;
-      border-radius: 5px;
-      cursor: pointer;
-    }
-    #loader {
-      text-align: center;
-      padding: 20px;
-      font-size: 18px;
       color: #00ccff;
-    }
-    #errorMsg {
-      text-align: center;
-      color: #ff5555;
-      margin-top: 20px;
-      font-weight: bold;
-    }
-    #playerError {
-      text-align: center;
-      color: #ff5555;
-      margin-top: 10px;
-      font-weight: bold;
     }
   </style>
 </head>
@@ -124,13 +92,42 @@
     </nav>
   </header>
 
+  <div id="authBar" style="background:#000; color:#0f0; padding:10px; text-align:right; display:none;">
+    Logged in as <span id="userEmail"></span> [<span id="userTierBadge"></span>]
+    <button onclick="logout()" style="margin-left:10px; background:red; color:white;">Logout</button>
+  </div>
+
   <div id="content"></div>
+
+  <div id="adBanner" style="display:none; text-align:center; margin: 20px;">
+    <p>🚨 Ad: Enjoy ad-free by upgrading your pass! 🎉</p>
+    <img src="https://via.placeholder.com/728x90?text=Your+Ad+Here" alt="Ad Banner">
+  </div>
+
   <div id="errorMsg"></div>
   <iframe id="player" src="" allowfullscreen style="display:none;"></iframe>
   <div id="playerError"></div>
 
+  <!-- Firebase SDK -->
+  <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-database-compat.js"></script>
+
   <script>
-    const API_KEY = "2e7af0b444be53c66db2c4bfb069b286";
+    const firebaseConfig = {
+  apiKey: "AIzaSyCbMwMJKqLuAO7lUPUNh_5SiY5eXtPO-q4",
+  authDomain: "streamx-b6e05.firebaseapp.com",
+  databaseURL: "https://streamx-b6e05-default-rtdb.firebaseio.com",
+  projectId: "streamx-b6e05",
+  storageBucket: "streamx-b6e05.firebasestorage.app",
+  messagingSenderId: "293739854404",
+  appId: "1:293739854404:web:5013fb77841130bcd89a11"
+};
+
+    firebase.initializeApp(firebaseConfig);
+    const auth = firebase.auth();
+    const database = firebase.database();
+
     const content = document.getElementById("content");
     const player = document.getElementById("player");
     const errorMsg = document.getElementById("errorMsg");
@@ -140,6 +137,86 @@
 
     window.addEventListener("hashchange", loadPage);
     window.addEventListener("load", loadPage);
+
+    function getUserTier(uid) {
+      return database.ref('users/' + uid).once('value').then(snapshot => snapshot.val());
+    }
+
+    auth.onAuthStateChanged(user => {
+      const authBar = document.getElementById("authBar");
+      const emailSpan = document.getElementById("userEmail");
+      const tierBadge = document.getElementById("userTierBadge");
+      const adBanner = document.getElementById("adBanner");
+
+      if (user) {
+        getUserTier(user.uid).then(userData => {
+          if (!userData) {
+            database.ref('users/' + user.uid).set({
+              email: user.email,
+              tier: "free",
+              expires: null
+            });
+            userData = { tier: "free" };
+          }
+
+          window.userTier = userData.tier;
+          window.userEmail = user.email;
+
+          emailSpan.textContent = user.email;
+          tierBadge.textContent = userData.tier.toUpperCase();
+          authBar.style.display = "block";
+
+          if (userData.tier === "free") {
+            adBanner.style.display = "block";
+          } else {
+            adBanner.style.display = "none";
+          }
+
+          loadPage();
+        });
+      } else {
+        authBar.style.display = "none";
+        adBanner.style.display = "none";
+        showLoginForm();
+      }
+    });
+
+    function showLoginForm() {
+      content.innerHTML = `
+        <h1>Login to StreamX</h1>
+        <div style="text-align:center">
+          <input id="emailInput" type="email" placeholder="Email" style="padding:10px; margin:5px;"><br>
+          <input id="passwordInput" type="password" placeholder="Password" style="padding:10px; margin:5px;"><br>
+          <button onclick="login()">Login</button>
+          <button onclick="register()">Register</button>
+        </div>
+        <div id="authMsg" style="color:red; text-align:center; margin-top:10px;"></div>
+      `;
+    }
+
+    function login() {
+      const email = document.getElementById("emailInput").value;
+      const pass = document.getElementById("passwordInput").value;
+      auth.signInWithEmailAndPassword(email, pass)
+        .then(() => loadPage())
+        .catch(e => document.getElementById("authMsg").innerText = e.message);
+    }
+
+    function register() {
+      const email = document.getElementById("emailInput").value;
+      const pass = document.getElementById("passwordInput").value;
+      auth.createUserWithEmailAndPassword(email, pass)
+        .then(() => loadPage())
+        .catch(e => document.getElementById("authMsg").innerText = e.message);
+    }
+
+    function logout() {
+      auth.signOut().then(() => {
+        window.userTier = null;
+        window.userEmail = null;
+        showLoginForm();
+      });
+    }
 
     async function loadPage() {
       clearTimeout(playerTimeout);
@@ -182,15 +259,12 @@
     }
 
     async function fetchMoviesByGenre(genreId) {
-      let url = '';
-      if (!genreId) {
-        url = `https://api.themoviedb.org/3/movie/popular?api_key=${API_KEY}&language=en-US&page=1`;
-      } else {
-        url = `https://api.themoviedb.org/3/discover/movie?api_key=${API_KEY}&with_genres=${genreId}&language=en-US&sort_by=popularity.desc&page=1`;
-      }
+      const API_KEY = "2e7af0b444be53c66db2c4bfb069b286";
+      let url = !genreId
+        ? `https://api.themoviedb.org/3/movie/popular?api_key=${API_KEY}&language=en-US&page=1`
+        : `https://api.themoviedb.org/3/discover/movie?api_key=${API_KEY}&with_genres=${genreId}&language=en-US&sort_by=popularity.desc&page=1`;
       const res = await fetch(url);
-      const data = await res.json();
-      return data.results;
+      return res.json().then(data => data.results);
     }
 
     function displayMovies(movies) {
@@ -211,7 +285,7 @@
       movies.slice(0, 20).forEach(async (movie) => {
         if (!movie.poster_path) return;
         try {
-          const imdbData = await fetch(`https://api.themoviedb.org/3/movie/${movie.id}/external_ids?api_key=${API_KEY}`)
+          const imdbData = await fetch(`https://api.themoviedb.org/3/movie/${movie.id}/external_ids?api_key=2e7af0b444be53c66db2c4bfb069b286`)
             .then(res => res.json());
           if (!imdbData.imdb_id) return;
 
@@ -231,16 +305,27 @@
       clearTimeout(playerTimeout);
       errorMsg.textContent = "";
       playerError.textContent = "";
+
+      if (!window.userTier) {
+        errorMsg.textContent = "Please log in to watch movies.";
+        return;
+      }
+
+      if (window.userTier === "free") {
+        errorMsg.textContent = "Upgrade to a Day or Week Pass to watch without ads.";
+        return;
+      }
+
       if (!/^tt\d+$/.test(imdbID)) {
         errorMsg.textContent = "Invalid movie ID, cannot load video.";
         return;
       }
+
       const embedUrl = `https://vidsrc.to/embed/movie/${imdbID}`;
       player.src = embedUrl;
       player.style.display = "block";
       window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
 
-      // After 5 seconds, show message if video might not be available
       playerTimeout = setTimeout(() => {
         playerError.textContent = "If the video failed to load, this media might not be available on VidSrc.";
       }, 5000);
@@ -258,14 +343,14 @@
       results.innerHTML = "<div id='loader'>Searching...</div>";
 
       try {
-        const data = await fetch(`https://api.themoviedb.org/3/search/movie?api_key=${API_KEY}&query=${encodeURIComponent(query)}`)
+        const data = await fetch(`https://api.themoviedb.org/3/search/movie?api_key=2e7af0b444be53c66db2c4bfb069b286&query=${encodeURIComponent(query)}`)
           .then(res => res.json());
 
         results.innerHTML = "";
         for (const movie of data.results.slice(0, 20)) {
           if (!movie.poster_path) continue;
           try {
-            const imdb = await fetch(`https://api.themoviedb.org/3/movie/${movie.id}/external_ids?api_key=${API_KEY}`)
+            const imdb = await fetch(`https://api.themoviedb.org/3/movie/${movie.id}/external_ids?api_key=2e7af0b444be53c66db2c4bfb069b286`)
               .then(res => res.json());
             if (imdb.imdb_id) {
               const div = document.createElement("div");
@@ -285,8 +370,7 @@
     }
 
     function capitalize(str) {
-      if (!str) return "";
-      return str.charAt(0).toUpperCase() + str.slice(1);
+      return str ? str.charAt(0).toUpperCase() + str.slice(1) : "";
     }
   </script>
 </body>

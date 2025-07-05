@@ -9,6 +9,9 @@
       font-family: Arial, sans-serif;
       background-color: #111;
       color: #fff;
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
     }
     header {
       background-color: #000;
@@ -36,6 +39,7 @@
     #content {
       padding: 20px;
       min-height: 60vh;
+      flex-grow: 1;
     }
     .grid {
       display: grid;
@@ -77,6 +81,29 @@
       font-weight: bold;
       color: #00ccff;
     }
+    footer {
+      background: #000;
+      padding: 15px 20px;
+      text-align: center;
+      border-top: 1px solid #222;
+    }
+    footer button {
+      background-color: #00ccff;
+      border: none;
+      color: black;
+      font-weight: bold;
+      padding: 10px 15px;
+      margin: 0 8px;
+      border-radius: 5px;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+    }
+    footer button:hover {
+      background-color: #0099cc;
+    }
+    a {
+      color: #00ccff;
+    }
   </style>
 </head>
 <body>
@@ -108,6 +135,12 @@
   <iframe id="player" src="" allowfullscreen style="display:none;"></iframe>
   <div id="playerError"></div>
 
+  <footer>
+    <button onclick="window.open('https://your-external-tos-link.com', '_blank', 'noopener')">Terms of Service</button>
+    <button onclick="showDMCA()">DMCA Takedown</button>
+    <button onclick="showAbout()">About StreamX</button>
+  </footer>
+
   <!-- Firebase SDK -->
   <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-auth-compat.js"></script>
@@ -136,12 +169,55 @@
     let playerTimeout;
 
     function loadPage() {
+      const hash = window.location.hash.slice(1) || "home";
+
+      // If hash is tos/dmca/about handle separately
+      if (hash === "dmca") {
+        showDMCA();
+        return;
+      } else if (hash === "about") {
+        showAbout();
+        return;
+      } else if (hash === "tos") {
+        // Open external TOS link in new tab and fallback content
+        window.open('https://your-external-tos-link.com', '_blank', 'noopener');
+        content.innerHTML = `<h1>Terms of Service</h1><p>You are being redirected to the Terms of Service page.</p>`;
+        return;
+      }
+
+      // Default page content
       content.innerHTML = `<h1>Welcome to StreamX</h1><p>Choose a category above to get started!</p>`;
+    }
+
+    function showDMCA() {
+      content.innerHTML = `
+        <h1>DMCA Takedown Request</h1>
+        <p>If you believe content on StreamX infringes your copyright, please submit a DMCA takedown request here.</p>
+        <p>Email: <a href="mailto:dmca@streamx.com" target="_blank" rel="noopener noreferrer">dmca@streamx.com</a></p>
+        <p>Include details such as:</p>
+        <ul>
+          <li>Your contact information</li>
+          <li>Description of the copyrighted work</li>
+          <li>URL of infringing content</li>
+          <li>Statement of good faith belief</li>
+          <li>Signature</li>
+        </ul>
+      `;
+    }
+
+    function showAbout() {
+      content.innerHTML = `
+        <h1>About StreamX</h1>
+        <p>StreamX is a free and premium movie streaming platform.</p>
+        <p>Our mission is to provide users with a wide range of movies in a user-friendly, ad-supported or ad-free environment depending on your subscription.</p>
+        <p>Contact us at: <a href="mailto:support@streamx.com" target="_blank" rel="noopener noreferrer">support@streamx.com</a></p>
+      `;
     }
 
     function showLoginForm() {
       content.innerHTML = `
         <h1>Login to StreamX</h1>
+        <p style="text-align:center; color:#00ccff;">You have to join <a href="https://discord.gg/your-discord-invite" target="_blank" rel="noopener noreferrer">StreamX Discord</a> to get a login.</p>
         <div style="text-align:center">
           <input id="emailInput" type="email" placeholder="Email" style="padding:10px; margin:5px;"><br>
           <input id="passwordInput" type="password" placeholder="Password" style="padding:10px; margin:5px;"><br>

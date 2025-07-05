@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>StreamX MultiPage Dynamic with Fallback</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background-color: #111;
+      color: #fff;
+    }
+    header {
+      background-color: #000;
+      padding: 15px 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+    nav a {
+      color: #00ccff;
+      margin: 5px 10px;
+      text-decoration: none;
+      font-weight: bold;
+      cursor: pointer;
+    }
+    nav a:hover {
+      text-decoration: underline;
+    }
+    h1 {
+      text-align: center;
+      color: #00ccff;
+      margin: 20px 0;
+    }
+    #content {
+      padding: 20px;
+      min-height: 60vh;
+    }
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+      gap: 20px;
+      margin-top: 20px;
+    }
+    .movie {
+      background-color: #1a1a1a;
+      border-radius: 10px;
+      overflow: hidden;
+      cursor: pointer;
+      transition: transform 0.2s ease;
+    }
+    .movie:hover {
+      transform: scale(1.03);
+    }
+    .movie img {
+      width: 100%;
+      display: block;
+    }
+    .movie-title {
+      text-align: center;
+      padding: 10px;
+      font-size: 14px;
+    }
+    iframe {
+      width: 100%;
+      height: 75vh;
+      border: none;
+      border-radius: 10px;
+      margin-top: 20px;
+    }
+    .search-box {
+      text-align: center;
+      margin-top: 20px;
+    }
+    .search-box input {
+      padding: 10px;
+      width: 300px;
+      border-radius: 5px;
+      border: none;
+      background-color: #222;
+      color: white;
+    }
+    .search-box button {
+      padding: 10px 20px;
+      margin-left: 10px;
+      background-color: #00ccff;
+      color: black;
+      font-weight: bold;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+    #loader {
+      text-align: center;
+      padding: 20px;
+      font-size: 18px;
+      color: #00ccff;
+    }
+    #errorMsg {
+      text-align: center;
+      color: #ff5555;
+      margin-top: 20px;
+      font-weight: bold;
+    }
+    #playerError {
+      text-align: center;
+      color: #ff5555;
+      margin-top: 10px;
+      font-weight: bold;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h2>🎬 StreamX</h2>
+    <nav>
+      <a href="#home" data-genre="">Home</a>
+      <a href="#action" data-genre="28">Action</a>
+      <a href="#comedy" data-genre="35">Comedy</a>
+      <a href="#horror" data-genre="27">Horror</a>
+      <a href="#scifi" data-genre="878">Sci-Fi</a>
+      <a href="#search">Search</a>
+    </nav>
+  </header>
+
+  <div id="content"></div>
+  <div id="errorMsg"></div>
+  <iframe id="player" src="" allowfullscreen style="display:none;"></iframe>
+  <div id="playerError"></div>
+
+  <script>
+    const API_KEY = "2e7af0b444be53c66db2c4bfb069b286";
+    const content = document.getElementById("content");
+    const player = document.getElementById("player");
+    const errorMsg = document.getElementById("errorMsg");
+    const playerError = document.getElementById("playerError");
+    const navLinks = document.querySelectorAll('nav a');
+    let playerTimeout;
+    let fallbackTimeout;
+    let triedFallback = false;
+
+    window.addEventListener("hashchange", loadPage);
+    window.addEventListener("load", loadPage);
+
+    async function loadPage() {
+      clearTimeout(playerTimeout);
+      clearTimeout(fallbackTimeout);
+      triedFallback = false;
+      player.style.display = "none";
+      player.src = "";
+      errorMsg.textContent = "";
+      playerError.textContent = "";
+      const hash = window.location.hash.slice(1) || "home";
+      
+      navLinks.forEach(a => a.classList.toggle('active', a.getAttribute('href') === '#' + hash));
+
+      if (hash === "search") {
+        content.innerHTML = `
+          <h1>🔍 Search Movies</h1>
+          <div class="search-box">
+            <input type="text" id="searchInput" placeholder="Enter movie name..." />
+            <button onclick="searchMovies()">Search</button>
+          </div>
+          <div class="grid" id="results"></div>
+        `;
+        return;
+      }
+
+      content.innerHTML = `<h1>${capitalize(hash)} Movies</h1><div id="loader">Loading...</div>`;
+
+      let genreId = null;
+      for (const a of navLinks) {
+        if (a.getAttribute('href') === '#' + hash) {
+          genreId = a.dataset.genre || null;
+          break;
+        }
+      }
+
+      try {
+        const movies = await fetchMoviesByGenre(genreId);
+        displayMovies(movies);
+      } catch (e) {
+        content.innerHTML = `<div id="errorMsg">Failed to load movies. Try again.</div>`;
+      }
+    }
+
+    async function fetchMoviesByGenre(genreId) {
+      let url = '';
+      if (!genreId) {
+        url = `https://api.themoviedb.org/3/movie/popular?api_key=${API_KEY}&language=en-US&page=1`;
+      } else {
+        url = `https://api.themoviedb.org/3/discover/movie?api_key=${API_KEY}&with_genres=${genreId}&language=en-US&sort_by=popularity.desc&page=1`;
+      }
+      const res = await fetch(url);
+      const data = await res.json();
+      return data.results;
+    }
+
+    function displayMovies(movies) {
+      if (!movies || movies.length === 0) {
+        content.innerHTML += `<div id="errorMsg">No movies found.</div>`;
+        return;
+      }
+      content.querySelector('#loader')?.remove();
+
+      let grid = content.querySelector('.grid');
+      if (!grid) {
+        grid = document.createElement('div');
+        grid.className = 'grid';
+        content.appendChild(grid);
+      }
+      grid.innerHTML = '';
+
+      movies.slice(0, 20).forEach(async (movie) => {
+        if (!movie.poster_path) return;
+        try {
+          const imdbData = await fetch(`https://api.themoviedb.org/3/movie/${movie.id}/external_ids?api_key=${API_KEY}`)
+            .then(res => res.json());
+          if (!imdbData.imdb_id) return;
+
+          const div = document.createElement('div');
+          div.className = 'movie';
+          div.innerHTML = `
+            <img src="https://image.tmdb.org/t/p/w500${movie.poster_path}" alt="${movie.title}">
+            <div class="movie-title">${movie.title}</div>
+          `;
+          div.onclick = () => playMovie(imdbData.imdb_id);
+          grid.appendChild(div);
+        } catch {}
+      });
+    }
+
+    function playMovie(imdbID) {
+      clearTimeout(playerTimeout);
+      clearTimeout(fallbackTimeout);
+      triedFallback = false;
+      errorMsg.textContent = "";
+      playerError.textContent = "";
+      if (!/^tt\d+$/.test(imdbID)) {
+        errorMsg.textContent = "Invalid movie ID, cannot load video.";
+        return;
+      }
+
+      const vidsrcUrl = `https://vidsrc.to/embed/movie/${imdbID}`;
+      // This fallback URL is just an example and will likely not work for real content without correct mapping
+      const streamtapeUrl = `https://streamtape.com/e/${imdbID.slice(2)}`;
+
+      player.src = vidsrcUrl;
+      player.style.display = "block";
+      window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
+
+      // After 7 seconds, try fallback if not already tried
+      playerTimeout = setTimeout(() => {
+        if (!triedFallback) {
+          player.src = streamtapeUrl;
+          triedFallback = true;
+          playerError.textContent = "Primary source failed, switching to fallback...";
+
+          // After 5 more seconds, show error if still no video
+          fallbackTimeout = setTimeout(() => {
+            playerError.textContent = "Both video sources failed or media unavailable.";
+          }, 5000);
+        }
+      }, 7000);
+    }
+
+    async function searchMovies() {
+      errorMsg.textContent = "";
+      playerError.textContent = "";
+      const query = document.getElementById("searchInput").value.trim();
+      const results = document.getElementById("results");
+      if (!query) {
+        results.innerHTML = "";
+        return;
+      }
+      results.innerHTML = "<div id='loader'>Searching...</div>";
+
+      try {
+        const data = await fetch(`https://api.themoviedb.org/3/search/movie?api_key=${API_KEY}&query=${encodeURIComponent(query)}`)
+          .then(res => res.json());
+
+        results.innerHTML = "";
+        for (const movie of data.results.slice(0, 20)) {
+          if (!movie.poster_path) continue;
+          try {
+            const imdb = await fetch(`https://api.themoviedb.org/3/movie/${movie.id}/external_ids?api_key=${API_KEY}`)
+              .then(res => res.json());
+            if (imdb.imdb_id) {
+              const div = document.createElement("div");
+              div.className = "movie";
+              div.innerHTML = `
+                <img src="https://image.tmdb.org/t/p/w500${movie.poster_path}" alt="${movie.title}">
+                <div class="movie-title">${movie.title}</div>
+              `;
+              div.onclick = () => playMovie(imdb.imdb_id);
+              results.appendChild(div);
+            }
+          } catch {}
+        }
+      } catch {
+        results.innerHTML = "<div id='errorMsg'>Failed to fetch search results. Try again.</div>";
+      }
+    }
+
+    function capitalize(str) {
+      if (!str) return "";
+      return str.charAt(0).toUpperCase() + str.slice(1);
+    }
+  </script>
+</body>
+</html>

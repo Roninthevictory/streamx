@@ -81,7 +81,7 @@
 </head>
 <body>
   <header>
-    <h2>🎬 StreamX</h2>
+    <h2>🎮 StreamX</h2>
     <nav>
       <a href="#home" data-genre="">Home</a>
       <a href="#action" data-genre="28">Action</a>
@@ -115,14 +115,14 @@
 
   <script>
     const firebaseConfig = {
-  apiKey: "AIzaSyCbMwMJKqLuAO7lUPUNh_5SiY5eXtPO-q4",
-  authDomain: "streamx-b6e05.firebaseapp.com",
-  databaseURL: "https://streamx-b6e05-default-rtdb.firebaseio.com",
-  projectId: "streamx-b6e05",
-  storageBucket: "streamx-b6e05.firebasestorage.app",
-  messagingSenderId: "293739854404",
-  appId: "1:293739854404:web:5013fb77841130bcd89a11"
-};
+      apiKey: "AIzaSyCbMwMJKqLuAO7lUPUNh_5SiY5eXtPO-q4",
+      authDomain: "streamx-b6e05.firebaseapp.com",
+      databaseURL: "https://streamx-b6e05-default-rtdb.firebaseio.com",
+      projectId: "streamx-b6e05",
+      storageBucket: "streamx-b6e05.firebasestorage.app",
+      messagingSenderId: "293739854404",
+      appId: "1:293739854404:web:5013fb77841130bcd89a11"
+    };
 
     firebase.initializeApp(firebaseConfig);
     const auth = firebase.auth();
@@ -135,8 +135,37 @@
     const navLinks = document.querySelectorAll('nav a');
     let playerTimeout;
 
-    window.addEventListener("hashchange", loadPage);
-    window.addEventListener("load", loadPage);
+    function loadPage() {
+      content.innerHTML = `<h1>Welcome to StreamX</h1><p>Choose a category above to get started!</p>`;
+    }
+
+    function showLoginForm() {
+      content.innerHTML = `
+        <h1>Login to StreamX</h1>
+        <div style="text-align:center">
+          <input id="emailInput" type="email" placeholder="Email" style="padding:10px; margin:5px;"><br>
+          <input id="passwordInput" type="password" placeholder="Password" style="padding:10px; margin:5px;"><br>
+          <button onclick="login()">Login</button>
+        </div>
+        <div id="authMsg" style="color:red; text-align:center; margin-top:10px;"></div>
+      `;
+    }
+
+    function login() {
+      const email = document.getElementById("emailInput").value;
+      const pass = document.getElementById("passwordInput").value;
+      auth.signInWithEmailAndPassword(email, pass)
+        .then(() => loadPage())
+        .catch(e => document.getElementById("authMsg").innerText = e.message);
+    }
+
+    function logout() {
+      auth.signOut().then(() => {
+        window.userTier = null;
+        window.userEmail = null;
+        showLoginForm();
+      });
+    }
 
     function getUserTier(uid) {
       return database.ref('users/' + uid).once('value').then(snapshot => snapshot.val());
@@ -181,197 +210,8 @@
       }
     });
 
-    function showLoginForm() {
-      content.innerHTML = `
-        <h1>Login to StreamX</h1>
-        <div style="text-align:center">
-          <input id="emailInput" type="email" placeholder="Email" style="padding:10px; margin:5px;"><br>
-          <input id="passwordInput" type="password" placeholder="Password" style="padding:10px; margin:5px;"><br>
-          <button onclick="login()">Login</button>
-          <button onclick="register()">Register</button>
-        </div>
-        <div id="authMsg" style="color:red; text-align:center; margin-top:10px;"></div>
-      `;
-    }
-
-    function login() {
-      const email = document.getElementById("emailInput").value;
-      const pass = document.getElementById("passwordInput").value;
-      auth.signInWithEmailAndPassword(email, pass)
-        .then(() => loadPage())
-        .catch(e => document.getElementById("authMsg").innerText = e.message);
-    }
-
-    function register() {
-      const email = document.getElementById("emailInput").value;
-      const pass = document.getElementById("passwordInput").value;
-      auth.createUserWithEmailAndPassword(email, pass)
-        .then(() => loadPage())
-        .catch(e => document.getElementById("authMsg").innerText = e.message);
-    }
-
-    function logout() {
-      auth.signOut().then(() => {
-        window.userTier = null;
-        window.userEmail = null;
-        showLoginForm();
-      });
-    }
-
-    async function loadPage() {
-      clearTimeout(playerTimeout);
-      player.style.display = "none";
-      player.src = "";
-      errorMsg.textContent = "";
-      playerError.textContent = "";
-      const hash = window.location.hash.slice(1) || "home";
-
-      navLinks.forEach(a => a.classList.toggle('active', a.getAttribute('href') === '#' + hash));
-
-      if (hash === "search") {
-        content.innerHTML = `
-          <h1>🔍 Search Movies</h1>
-          <div class="search-box">
-            <input type="text" id="searchInput" placeholder="Enter movie name..." />
-            <button onclick="searchMovies()">Search</button>
-          </div>
-          <div class="grid" id="results"></div>
-        `;
-        return;
-      }
-
-      content.innerHTML = `<h1>${capitalize(hash)} Movies</h1><div id="loader">Loading...</div>`;
-
-      let genreId = null;
-      for (const a of navLinks) {
-        if (a.getAttribute('href') === '#' + hash) {
-          genreId = a.dataset.genre || null;
-          break;
-        }
-      }
-
-      try {
-        const movies = await fetchMoviesByGenre(genreId);
-        displayMovies(movies);
-      } catch (e) {
-        content.innerHTML = `<div id="errorMsg">Failed to load movies. Try again.</div>`;
-      }
-    }
-
-    async function fetchMoviesByGenre(genreId) {
-      const API_KEY = "2e7af0b444be53c66db2c4bfb069b286";
-      let url = !genreId
-        ? `https://api.themoviedb.org/3/movie/popular?api_key=${API_KEY}&language=en-US&page=1`
-        : `https://api.themoviedb.org/3/discover/movie?api_key=${API_KEY}&with_genres=${genreId}&language=en-US&sort_by=popularity.desc&page=1`;
-      const res = await fetch(url);
-      return res.json().then(data => data.results);
-    }
-
-    function displayMovies(movies) {
-      if (!movies || movies.length === 0) {
-        content.innerHTML += `<div id="errorMsg">No movies found.</div>`;
-        return;
-      }
-      content.querySelector('#loader')?.remove();
-
-      let grid = content.querySelector('.grid');
-      if (!grid) {
-        grid = document.createElement('div');
-        grid.className = 'grid';
-        content.appendChild(grid);
-      }
-      grid.innerHTML = '';
-
-      movies.slice(0, 20).forEach(async (movie) => {
-        if (!movie.poster_path) return;
-        try {
-          const imdbData = await fetch(`https://api.themoviedb.org/3/movie/${movie.id}/external_ids?api_key=2e7af0b444be53c66db2c4bfb069b286`)
-            .then(res => res.json());
-          if (!imdbData.imdb_id) return;
-
-          const div = document.createElement('div');
-          div.className = 'movie';
-          div.innerHTML = `
-            <img src="https://image.tmdb.org/t/p/w500${movie.poster_path}" alt="${movie.title}">
-            <div class="movie-title">${movie.title}</div>
-          `;
-          div.onclick = () => playMovie(imdbData.imdb_id);
-          grid.appendChild(div);
-        } catch {}
-      });
-    }
-
-    function playMovie(imdbID) {
-      clearTimeout(playerTimeout);
-      errorMsg.textContent = "";
-      playerError.textContent = "";
-
-      if (!window.userTier) {
-        errorMsg.textContent = "Please log in to watch movies.";
-        return;
-      }
-
-      if (window.userTier === "free") {
-        errorMsg.textContent = "Upgrade to a Day or Week Pass to watch without ads.";
-        return;
-      }
-
-      if (!/^tt\d+$/.test(imdbID)) {
-        errorMsg.textContent = "Invalid movie ID, cannot load video.";
-        return;
-      }
-
-      const embedUrl = `https://vidsrc.to/embed/movie/${imdbID}`;
-      player.src = embedUrl;
-      player.style.display = "block";
-      window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
-
-      playerTimeout = setTimeout(() => {
-        playerError.textContent = "If the video failed to load, this media might not be available on VidSrc.";
-      }, 5000);
-    }
-
-    async function searchMovies() {
-      errorMsg.textContent = "";
-      playerError.textContent = "";
-      const query = document.getElementById("searchInput").value.trim();
-      const results = document.getElementById("results");
-      if (!query) {
-        results.innerHTML = "";
-        return;
-      }
-      results.innerHTML = "<div id='loader'>Searching...</div>";
-
-      try {
-        const data = await fetch(`https://api.themoviedb.org/3/search/movie?api_key=2e7af0b444be53c66db2c4bfb069b286&query=${encodeURIComponent(query)}`)
-          .then(res => res.json());
-
-        results.innerHTML = "";
-        for (const movie of data.results.slice(0, 20)) {
-          if (!movie.poster_path) continue;
-          try {
-            const imdb = await fetch(`https://api.themoviedb.org/3/movie/${movie.id}/external_ids?api_key=2e7af0b444be53c66db2c4bfb069b286`)
-              .then(res => res.json());
-            if (imdb.imdb_id) {
-              const div = document.createElement("div");
-              div.className = "movie";
-              div.innerHTML = `
-                <img src="https://image.tmdb.org/t/p/w500${movie.poster_path}" alt="${movie.title}">
-                <div class="movie-title">${movie.title}</div>
-              `;
-              div.onclick = () => playMovie(imdb.imdb_id);
-              results.appendChild(div);
-            }
-          } catch {}
-        }
-      } catch {
-        results.innerHTML = "<div id='errorMsg'>Failed to fetch search results. Try again.</div>";
-      }
-    }
-
-    function capitalize(str) {
-      return str ? str.charAt(0).toUpperCase() + str.slice(1) : "";
-    }
+    window.addEventListener("hashchange", loadPage);
+    window.addEventListener("load", loadPage);
   </script>
 </body>
 </html>

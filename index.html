@@ -216,14 +216,17 @@
 <body>
     <header>
         <h2>🎬 StreamX</h2>
-        <nav>
-            <a href="#home" data-genre="">Home</a>
-            <a href="#action" data-genre="28">Action</a>
-            <a href="#comedy" data-genre="35">Comedy</a>
-            <a href="#horror" data-genre="27">Horror</a>
-            <a href="#scifi" data-genre="878">Sci-Fi</a>
-            <a href="#search">Search</a>
-        </nav>
+        <div id="navTabs" style="display: none;">
+    <nav>
+        <a href="#home" data-genre="">Home</a>
+        <a href="#action" data-genre="28">Action</a>
+        <a href="#comedy" data-genre="35">Comedy</a>
+        <a href="#horror" data-genre="27">Horror</a>
+        <a href="#scifi" data-genre="878">Sci-Fi</a>
+        <a href="#search">Search</a>
+    </nav>
+</div>
+
     </header>
 
     <div id="authBar" style="background:#000; color:#0f0; padding:10px; text-align:right; display:none;">
@@ -584,45 +587,48 @@
         }
 
         // --- Firebase Authentication State Listener ---
-        auth.onAuthStateChanged(user => {
-            const authBar = document.getElementById("authBar");
-            const emailSpan = document.getElementById("userEmail");
-            const tierBadge = document.getElementById("userTierBadge");
-            const adBanner = document.getElementById("adBanner");
+auth.onAuthStateChanged(user => {
+    const authBar = document.getElementById("authBar");
+    const emailSpan = document.getElementById("userEmail");
+    const tierBadge = document.getElementById("userTierBadge");
+    const adBanner = document.getElementById("adBanner");
+    const navTabs = document.getElementById("navTabs");
 
-            if (user) {
-                getUserTier(user.uid).then(userData => {
-                    if (!userData) {
-                        // If user exists in auth but not in DB, create default entry
-                        database.ref('users/' + user.uid).set({
-                            email: user.email,
-                            tier: "free",
-                            expires: null
-                        });
-                        userData = { tier: "free" }; // Use default for current session
-                    }
-
-                    window.userTier = userData.tier;
-                    window.userEmail = user.email;
-
-                    emailSpan.textContent = user.email;
-                    tierBadge.textContent = userData.tier.toUpperCase();
-                    authBar.style.display = "block";
-
-                    if (userData.tier === "free") {
-                        adBanner.style.display = "block";
-                    } else {
-                        adBanner.style.display = "none";
-                    }
-
-                    loadPage(); // Load content after user status is determined
+    if (user) {
+        navTabs.style.display = "block"; // Show categories
+        getUserTier(user.uid).then(userData => {
+            if (!userData) {
+                database.ref('users/' + user.uid).set({
+                    email: user.email,
+                    tier: "free",
+                    expires: null
                 });
-            } else {
-                authBar.style.display = "none";
-                adBanner.style.display = "none";
-                showLoginForm(); // Show login form if not authenticated
+                userData = { tier: "free" };
             }
+
+            window.userTier = userData.tier;
+            window.userEmail = user.email;
+
+            emailSpan.textContent = user.email;
+            tierBadge.textContent = userData.tier.toUpperCase();
+            authBar.style.display = "block";
+
+            if (userData.tier === "free") {
+                adBanner.style.display = "block";
+            } else {
+                adBanner.style.display = "none";
+            }
+
+            loadPage();
         });
+    } else {
+        navTabs.style.display = "none"; // Hide categories
+        authBar.style.display = "none";
+        adBanner.style.display = "none";
+        showLoginForm();
+    }
+});
+
 
         // --- Initial Load Event Listeners ---
         window.addEventListener("hashchange", loadPage);

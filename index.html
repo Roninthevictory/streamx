@@ -159,6 +159,58 @@
             border-radius: 5px;
             cursor: pointer;
         }
+       .popup-overlay {
+         position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.7);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
+
+.popup-content {
+    background: #1a1a1a;
+    padding: 30px;
+    border-radius: 10px;
+    text-align: center;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.5);
+    max-width: 400px;
+    width: 90%;
+    color: #fff;
+    position: relative;
+    border: 1px solid #00ccff;
+}
+
+.popup-content h2 {
+    color: #00ccff;
+    margin-top: 0;
+    margin-bottom: 20px;
+}
+
+.popup-content p {
+    margin-bottom: 25px;
+    line-height: 1.5;
+}
+
+.popup-content button {
+    background-color: #00ccff;
+    color: black;
+    border: none;
+    padding: 10px 25px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-weight: bold;
+    transition: background-color 0.3s ease;
+}
+
+.popup-content button:hover {
+    background-color: #0099cc;
+}
+/* --- End Popup Specific CSS --- */
     </style>
 </head>
 <body>
@@ -189,6 +241,17 @@
     <div id="errorMsg"></div>
     <iframe id="player" src="" allowfullscreen style="display:none;"></iframe>
     <div id="playerError"></div>
+
+   <div id="tvShowWarningPopup" class="popup-overlay" style="display: none;">
+    <div class="popup-content">
+        <h2>Important Notice</h2>
+        <p>
+            We apologize for the inconvenience, but **TV Shows are currently not working** on StreamX. We are actively working to resolve this issue.
+        </p>
+        <p>Please enjoy our wide selection of **Movies** in the meantime!</p>
+        <button id="closeTvWarningPopup">Understood</button>
+    </div>
+</div>
 
     <footer>
         <button onclick="window.open('https://your-external-tos-link.com', '_blank', 'noopener')">Terms of Service</button>
@@ -572,6 +635,30 @@
             }
             // If auth.currentUser exists, onAuthStateChanged will trigger loadPage
         });
+
+       // --- One-Time Popup Logic for TV Shows ---
+document.addEventListener('DOMContentLoaded', () => {
+    const tvShowWarningPopup = document.getElementById('tvShowWarningPopup');
+    const closeTvWarningPopupBtn = document.getElementById('closeTvWarningPopup');
+
+    // Check if the user has seen the TV show warning this session
+    // Using sessionStorage for per-session display
+    const hasSeenTvWarning = sessionStorage.getItem('hasSeenTvShowWarning');
+
+    if (!hasSeenTvWarning) {
+        // If not seen, display the popup
+        tvShowWarningPopup.style.display = 'flex'; // Use flex to center
+    }
+
+    closeTvWarningPopupBtn.addEventListener('click', () => {
+        tvShowWarningPopup.style.display = 'none';
+        // Set a flag in sessionStorage so it doesn't show again this session
+        sessionStorage.setItem('hasSeenTvShowWarning', 'true');
+    });
+
+    // Optional: If you also have a "TV Shows" link in your nav, you might want to disable it or
+    // provide similar feedback when clicked. For now, this is a general popup.
+});
     </script>
 </body>
 </html>

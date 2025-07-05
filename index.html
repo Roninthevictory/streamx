@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>StreamX MultiPage Dynamic with Fallback</title>
+  <title>StreamX MultiPage Dynamic</title>
   <style>
     body {
       margin: 0;
@@ -137,22 +137,18 @@
     const playerError = document.getElementById("playerError");
     const navLinks = document.querySelectorAll('nav a');
     let playerTimeout;
-    let fallbackTimeout;
-    let triedFallback = false;
 
     window.addEventListener("hashchange", loadPage);
     window.addEventListener("load", loadPage);
 
     async function loadPage() {
       clearTimeout(playerTimeout);
-      clearTimeout(fallbackTimeout);
-      triedFallback = false;
       player.style.display = "none";
       player.src = "";
       errorMsg.textContent = "";
       playerError.textContent = "";
       const hash = window.location.hash.slice(1) || "home";
-      
+
       navLinks.forEach(a => a.classList.toggle('active', a.getAttribute('href') === '#' + hash));
 
       if (hash === "search") {
@@ -233,36 +229,21 @@
 
     function playMovie(imdbID) {
       clearTimeout(playerTimeout);
-      clearTimeout(fallbackTimeout);
-      triedFallback = false;
       errorMsg.textContent = "";
       playerError.textContent = "";
       if (!/^tt\d+$/.test(imdbID)) {
         errorMsg.textContent = "Invalid movie ID, cannot load video.";
         return;
       }
-
-      const vidsrcUrl = `https://vidsrc.to/embed/movie/${imdbID}`;
-      // This fallback URL is just an example and will likely not work for real content without correct mapping
-      const streamtapeUrl = `https://streamtape.com/e/${imdbID.slice(2)}`;
-
-      player.src = vidsrcUrl;
+      const embedUrl = `https://vidsrc.to/embed/movie/${imdbID}`;
+      player.src = embedUrl;
       player.style.display = "block";
       window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
 
-      // After 7 seconds, try fallback if not already tried
+      // After 5 seconds, show message if video might not be available
       playerTimeout = setTimeout(() => {
-        if (!triedFallback) {
-          player.src = streamtapeUrl;
-          triedFallback = true;
-          playerError.textContent = "Primary source failed, switching to fallback...";
-
-          // After 5 more seconds, show error if still no video
-          fallbackTimeout = setTimeout(() => {
-            playerError.textContent = "Both video sources failed or media unavailable.";
-          }, 5000);
-        }
-      }, 7000);
+        playerError.textContent = "If the video failed to load, this media might not be available on VidSrc.";
+      }, 5000);
     }
 
     async function searchMovies() {

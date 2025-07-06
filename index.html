@@ -7,14 +7,12 @@
   <title>Streamx</title>
   <meta name="description" content="StreamX Movies - Stream Smarter">
 
-  <!-- Favicon -->
   <link rel="apple-touch-icon" sizes="180x180" href="https://cdn.discordapp.com/attachments/1390972394138763304/1390972428238454784/ChatGPT_Image_Jul_5_2025_03_00_06_AM.png?ex=686a3385&is=6868e205&hm=af327a1fbe8f91dc6feb573cca3806cd794b2cfe67d76ed5ab1c0e10c0503ea3&">
   <link rel="icon" type="image/png" sizes="32x32" href="https://cdn.discordapp.com/attachments/1390972394138763304/1390972428238454784/ChatGPT_Image_Jul_5_2025_03_00_06_AM.png?ex=686a3385&is=6868e205&hm=af327a1fbe8f91dc6feb573cca3806cd794b2cfe67d76ed5ab1c0e10c0503ea3&">
   <link rel="icon" type="image/png" sizes="16x16" href="https://cdn.discordapp.com/attachments/1390972394138763304/1390972428238454784/ChatGPT_Image_Jul_5_2025_03_00_06_AM.png?ex=686a3385&is=6868e205&hm=af327a1fbe8f91dc6feb573cca3806cd794b2cfe67d76ed5ab1c0e10c0503ea3&">
   <link rel="manifest" href="/site.webmanifest">
   <link rel="icon" href="https://cdn.discordapp.com/attachments/1390972394138763304/1390972428238454784/ChatGPT_Image_Jul_5_2025_03_00_06_AM.png?ex=686a3385&is=6868e205&hm=af327a1fbe8f91dc6feb573cca3806cd794b2cfe67d76ed5ab1c0e10c0503ea3&" type="image/x-icon" />
 
-  <!-- Open Graph Meta -->
   <meta property="og:title" content="StreamX Movies">
   <meta property="og:description" content="StreamX Movies - Stream Smarter">
   <meta property="og:image" content="https://cdn.discordapp.com/attachments/1390972394138763304/1390972428238454784/ChatGPT_Image_Jul_5_2025_03_00_06_AM.png?ex=686a3385&is=6868e205&hm=af327a1fbe8f91dc6feb573cca3806cd794b2cfe67d76ed5ab1c0e10c0503ea3&">
@@ -170,74 +168,130 @@
             cursor: pointer;
         }
        .popup-overlay {
-         position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: rgba(0, 0, 0, 0.7);
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    z-index: 1000;
-}
+          position: fixed;
+          top: 0;
+          left: 0;
+          width: 100%;
+          height: 100%;
+          background: rgba(0, 0, 0, 0.7);
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          z-index: 1000;
+      }
 
-.popup-content {
-    background: #1a1a1a;
-    padding: 30px;
-    border-radius: 10px;
-    text-align: center;
-    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.5);
-    max-width: 400px;
-    width: 90%;
-    color: #fff;
-    position: relative;
-    border: 1px solid #00ccff;
-}
+      .popup-content {
+          background: #1a1a1a;
+          padding: 30px;
+          border-radius: 10px;
+          text-align: center;
+          box-shadow: 0 5px 15px rgba(0, 0, 0, 0.5);
+          max-width: 400px;
+          width: 90%;
+          color: #fff;
+          position: relative;
+          border: 1px solid #00ccff;
+      }
 
-.popup-content h2 {
-    color: #00ccff;
-    margin-top: 0;
-    margin-bottom: 20px;
-}
+      .popup-content h2 {
+          color: #00ccff;
+          margin-top: 0;
+          margin-bottom: 20px;
+      }
 
-.popup-content p {
-    margin-bottom: 25px;
-    line-height: 1.5;
-}
+      .popup-content p {
+          margin-bottom: 25px;
+          line-height: 1.5;
+      }
 
-.popup-content button {
-    background-color: #00ccff;
-    color: black;
-    border: none;
-    padding: 10px 25px;
-    border-radius: 5px;
-    cursor: pointer;
-    font-weight: bold;
-    transition: background-color 0.3s ease;
-}
+      .popup-content button {
+          background-color: #00ccff;
+          color: black;
+          border: none;
+          padding: 10px 25px;
+          border-radius: 5px;
+          cursor: pointer;
+          font-weight: bold;
+          transition: background-color 0.3s ease;
+      }
 
-.popup-content button:hover {
-    background-color: #0099cc;
-}
-.grandOpeningBanner {
-    background-color: #00ccff;
-    color: #000;
-    text-align: center;
-    padding: 12px 20px;
-    font-size: 16px;
-    font-weight: bold;
-    border-bottom: 2px solid #0088aa;
-}
-.grandOpeningBanner a {
-    color: #000;
-    text-decoration: underline;
-}
-.grandOpeningBanner a:hover {
-    text-decoration: none;
-}
+      .popup-content button:hover {
+          background-color: #0099cc;
+      }
+      .grandOpeningBanner {
+          background-color: #00ccff;
+          color: #000;
+          text-align: center;
+          padding: 12px 20px;
+          font-size: 16px;
+          font-weight: bold;
+          border-bottom: 2px solid #0088aa;
+      }
+      .grandOpeningBanner a {
+          color: #000;
+          text-decoration: underline;
+      }
+      .grandOpeningBanner a:hover {
+          text-decoration: none;
+      }
 
-/* --- End Popup Specific CSS --- */
+      /* New styles for TV show details */
+      .tv-details {
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          padding: 20px;
+      }
+
+      .tv-details img {
+          max-width: 300px;
+          border-radius: 10px;
+          margin-bottom: 20px;
+      }
+
+      .tv-details h2 {
+          color: #00ccff;
+          margin-bottom: 10px;
+          text-align: center;
+      }
+
+      .tv-details p {
+          text-align: center;
+          margin-bottom: 20px;
+          max-width: 800px;
+          line-height: 1.6;
+      }
+
+      .episode-selector {
+          margin-bottom: 20px;
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+      }
+
+      .episode-selector select {
+          padding: 10px;
+          border-radius: 5px;
+          border: 1px solid #00ccff;
+          background-color: #222;
+          color: #fff;
+          font-size: 16px;
+          margin-bottom: 10px;
+      }
+
+      .episode-description {
+          background-color: #1a1a1a;
+          padding: 15px;
+          border-radius: 8px;
+          margin-top: 15px;
+          max-width: 600px;
+          text-align: left;
+      }
+
+      .episode-description h3 {
+          color: #00ccff;
+          margin-top: 0;
+      }
     </style>
 </head>
 <body>
@@ -245,11 +299,12 @@
         <h2>🎬 StreamX</h2>
         <div id="navTabs" style="display: none;">
     <nav>
-        <a href="#home" data-genre="">Home</a>
-        <a href="#action" data-genre="28">Action</a>
-        <a href="#comedy" data-genre="35">Comedy</a>
-        <a href="#horror" data-genre="27">Horror</a>
-        <a href="#scifi" data-genre="878">Sci-Fi</a>
+        <a href="#home" data-media-type="movie" data-genre="">Home</a>
+        <a href="#action" data-media-type="movie" data-genre="28">Action Movies</a>
+        <a href="#comedy" data-media-type="movie" data-genre="35">Comedy Movies</a>
+        <a href="#horror" data-media-type="movie" data-genre="27">Horror Movies</a>
+        <a href="#scifi" data-media-type="movie" data-genre="878">Sci-Fi Movies</a>
+        <a href="#tvshows" data-media-type="tv" data-genre="">TV Shows</a>
         <a href="#search">Search</a>
     </nav>
 </div>
@@ -277,18 +332,7 @@
     <iframe id="player" src="" allowfullscreen style="display:none;"></iframe>
     <div id="playerError"></div>
 
-   <div id="tvShowWarningPopup" class="popup-overlay" style="display: none;">
-    <div class="popup-content">
-        <h2>Important Notice</h2>
-        <p>
-            We apologize for the inconvenience, but **TV Shows are currently not working** on StreamX. We are actively working to resolve this issue.
-        </p>
-        <p>Please enjoy our wide selection of **Movies** in the meantime!</p>
-        <button id="closeTvWarningPopup">Understood</button>
-    </div>
-</div>
-
-    <footer>
+   <footer>
         <button onclick="window.open('https://your-external-tos-link.com', '_blank', 'noopener')">Terms of Service</button>
         <button onclick="showDMCA()">DMCA Takedown</button>
         <button onclick="showAbout()">About StreamX</button>
@@ -351,6 +395,7 @@ function sendWebhookLog(action, userData = {}) {
         const TMDB_API_KEY = "2e7af0b444be53c66db2c4bfb069b286"; // <<<<<<<<<<<<<<<< REPLACE THIS WITH YOUR ACTUAL TMDB API KEY
         const TMDB_BASE_URL = "https://api.themoviedb.org/3";
         const TMDB_IMAGE_BASE_URL = "https://image.tmdb.org/t/p/w500"; // For movie/TV show posters
+        const TMDB_BACKDROP_BASE_URL = "https://image.tmdb.org/t/p/w1280"; // For TV show backdrops
 
         // --- Helper Functions ---
         function capitalize(str) {
@@ -370,10 +415,9 @@ function sendWebhookLog(action, userData = {}) {
         async function fetchMediaData(type, idOrQuery, isSearch = false) {
             let url = '';
             if (isSearch) {
-                // Search for movies or TV shows
                 url = `${TMDB_BASE_URL}/search/${type}?api_key=${TMDB_API_KEY}&query=${encodeURIComponent(idOrQuery)}`;
             } else if (idOrQuery) {
-                // Discover by genre
+                // Discover by genre for movies, or popular for TV shows if genreId is empty
                 url = `${TMDB_BASE_URL}/discover/${type}?api_key=${TMDB_API_KEY}&with_genres=${idOrQuery}&language=en-US&sort_by=popularity.desc&page=1`;
             } else {
                 // Popular movies/TV shows
@@ -390,6 +434,34 @@ function sendWebhookLog(action, userData = {}) {
             } catch (e) {
                 console.error(`Fetch Error for ${type}:`, e);
                 throw new Error(`Failed to load ${type} data. Please try again later.`);
+            }
+        }
+
+        async function fetchTvShowDetails(tvId) {
+            try {
+                const res = await fetch(`${TMDB_BASE_URL}/tv/${tvId}?api_key=${TMDB_API_KEY}&append_to_response=seasons&language=en-US`);
+                if (!res.ok) {
+                    throw new Error(`HTTP error! status: ${res.status}`);
+                }
+                const data = await res.json();
+                return data;
+            } catch (e) {
+                console.error("Error fetching TV show details:", e);
+                throw new Error("Failed to load TV show details.");
+            }
+        }
+
+        async function fetchTvShowEpisodes(tvId, seasonNumber) {
+            try {
+                const res = await fetch(`${TMDB_BASE_URL}/tv/${tvId}/season/${seasonNumber}?api_key=${TMDB_API_KEY}&language=en-US`);
+                if (!res.ok) {
+                    throw new Error(`HTTP error! status: ${res.status}`);
+                }
+                const data = await res.json();
+                return data.episodes;
+            } catch (e) {
+                console.error("Error fetching TV show episodes:", e);
+                throw new Error("Failed to load TV show episodes.");
             }
         }
 
@@ -418,45 +490,170 @@ function sendWebhookLog(action, userData = {}) {
             for (const item of mediaItems.slice(0, 20)) { // Limit to 20 items for initial load
                 if (!item.poster_path) continue;
 
-                const imdbId = await getImdbId(item.id, mediaType);
-                if (!imdbId) continue; // Skip if no IMDb ID can be found for embedding
-
                 const div = document.createElement('div');
-                div.className = 'movie';
+                div.className = 'movie'; // Keeping .movie class as it's styled similarly
                 div.innerHTML = `
                     <img src="${TMDB_IMAGE_BASE_URL}${item.poster_path}" alt="${item.title || item.name}">
                     <div class="movie-title">${item.title || item.name}</div>
                 `;
-                div.onclick = () => playMedia(imdbId, item.title || item.name);
-                grid.appendChild(div);
+
+                if (mediaType === 'movie') {
+                    const imdbId = await getImdbId(item.id, mediaType);
+                    if (imdbId) {
+                        div.onclick = () => playMedia('movie', imdbId, item.title || item.name);
+                        grid.appendChild(div);
+                    }
+                } else if (mediaType === 'tv') {
+                    div.onclick = () => displayTvShowDetails(item.id, item.name);
+                    grid.appendChild(div);
+                }
             }
 
             if (grid.children.length === 0 && mediaItems.length > 0) {
-                errorMsg.textContent = "Could not find playable links for the displayed content.";
+                errorMsg.textContent = `Could not find playable links for the displayed ${mediaType} content.`;
             } else if (grid.children.length === 0) {
-                errorMsg.textContent = "No content available.";
+                errorMsg.textContent = `No ${mediaType} content available.`;
             }
         }
 
-        function playMedia(imdbID, mediaTitle) {
+        async function displayTvShowDetails(tvId, tvTitle) {
+            clearMessages();
+            content.innerHTML = `<div id="loader">Loading TV show details...</div>`;
+
+            try {
+                const tvShow = await fetchTvShowDetails(tvId);
+                if (!tvShow) {
+                    throw new Error("TV show details not found.");
+                }
+
+                content.innerHTML = `
+                    <div class="tv-details">
+                        <img src="${TMDB_IMAGE_BASE_URL}${tvShow.poster_path}" alt="${tvShow.name}">
+                        <h2>${tvShow.name}</h2>
+                        <p>${tvShow.overview}</p>
+                        <div class="episode-selector">
+                            <label for="seasonSelect">Select Season:</label>
+                            <select id="seasonSelect"></select>
+                            <label for="episodeSelect">Select Episode:</label>
+                            <select id="episodeSelect"></select>
+                            <div class="episode-description" id="episodeDescription">
+                                <h3>Episode Description:</h3>
+                                <p id="episodeDescText">Select an episode to see its description.</p>
+                            </div>
+                            <button onclick="playSelectedEpisode(${tvShow.id}, '${tvShow.name}')" style="margin-top: 20px; padding: 10px 20px; background-color: #00ccff; color: black; border: none; border-radius: 5px; cursor: pointer; font-weight: bold;">Play Episode</button>
+                        </div>
+                    </div>
+                `;
+
+                const seasonSelect = document.getElementById('seasonSelect');
+                const episodeSelect = document.getElementById('episodeSelect');
+                const episodeDescText = document.getElementById('episodeDescText');
+
+                // Populate seasons
+                tvShow.seasons.forEach(season => {
+                    // Filter out "Specials" or seasons with 0 episodes unless they are explicitly desired
+                    if (season.season_number > 0 && season.episode_count > 0) {
+                        const option = document.createElement('option');
+                        option.value = season.season_number;
+                        option.textContent = `Season ${season.season_number}`;
+                        seasonSelect.appendChild(option);
+                    }
+                });
+
+                // Function to load episodes for the selected season
+                const loadEpisodes = async () => {
+                    episodeSelect.innerHTML = ''; // Clear previous episodes
+                    episodeDescText.textContent = 'Select an episode to see its description.';
+                    const selectedSeason = seasonSelect.value;
+                    if (selectedSeason) {
+                        const episodes = await fetchTvShowEpisodes(tvShow.id, selectedSeason);
+                        episodes.forEach(episode => {
+                            const option = document.createElement('option');
+                            option.value = episode.episode_number;
+                            option.textContent = `E${episode.episode_number}: ${episode.name}`;
+                            option.dataset.overview = episode.overview || 'No description available.';
+                            episodeSelect.appendChild(option);
+                        });
+                        // Display description for the first episode by default
+                        if (episodes.length > 0) {
+                            episodeDescText.textContent = episodes[0].overview || 'No description available.';
+                        }
+                    }
+                };
+
+                // Event listener for season change
+                seasonSelect.addEventListener('change', loadEpisodes);
+
+                // Event listener for episode change to update description
+                episodeSelect.addEventListener('change', () => {
+                    const selectedOption = episodeSelect.options[episodeSelect.selectedIndex];
+                    episodeDescText.textContent = selectedOption.dataset.overview;
+                });
+
+                // Load episodes for the first season by default
+                if (tvShow.seasons.length > 0) {
+                    await loadEpisodes();
+                }
+
+            } catch (e) {
+                console.error("Error displaying TV show details:", e);
+                content.innerHTML = `<div id="errorMsg">${e.message}</div>`;
+            }
+        }
+
+
+        function playMedia(mediaType, imdbID, mediaTitle, seasonNumber = null, episodeNumber = null) {
             clearMessages();
             if (!imdbID || !/^tt\d+$/.test(imdbID)) {
                 errorMsg.textContent = "Invalid content ID, cannot load video.";
                 return;
             }
 
-            const embedUrl = `https://vidsrc.to/embed/movie/${imdbID}`; // Note: vidsrc.to primarily supports movies via IMDb ID
+            let embedUrl = '';
+            if (mediaType === 'movie') {
+                embedUrl = `https://vidsrc.to/embed/movie/${imdbID}`;
+            } else if (mediaType === 'tv' && seasonNumber !== null && episodeNumber !== null) {
+                embedUrl = `https://vidsrc.to/embed/tv/${imdbID}/${seasonNumber}/${episodeNumber}`;
+            } else {
+                errorMsg.textContent = "Invalid parameters for TV show playback.";
+                return;
+            }
+
             player.src = embedUrl;
             player.style.display = "block";
             // Scroll to player view
             window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
 
-            playerError.textContent = `Now attempting to play: ${mediaTitle}.`;
+            playerError.textContent = `Now attempting to play: ${mediaTitle}${mediaType === 'tv' ? ` S${seasonNumber} E${episodeNumber}` : ''}.`;
             // After a few seconds, show message if video might not be available
             playerTimeout = setTimeout(() => {
-                playerError.textContent = `If "${mediaTitle}" failed to load, this content might not be available on VidSrc.`;
-            }, 7000); // Give it a bit more time to load
+                playerError.textContent = `If "${mediaTitle}${mediaType === 'tv' ? ` S${seasonNumber} E${episodeNumber}` : ''}" failed to load, this content might not be available on VidSrc.`;
+            }, 7000);
         }
+
+        function playSelectedEpisode(tvId, tvTitle) {
+            const seasonSelect = document.getElementById('seasonSelect');
+            const episodeSelect = document.getElementById('episodeSelect');
+
+            const selectedSeason = seasonSelect.value;
+            const selectedEpisode = episodeSelect.value;
+
+            if (selectedSeason && selectedEpisode) {
+                 getImdbId(tvId, 'tv').then(imdbId => {
+                    if (imdbId) {
+                        playMedia('tv', imdbId, tvTitle, selectedSeason, selectedEpisode);
+                    } else {
+                        playerError.textContent = "Could not find IMDb ID for this TV show to play.";
+                    }
+                }).catch(e => {
+                    console.error("Error getting IMDb ID for TV show:", e);
+                    playerError.textContent = "Error preparing TV show playback.";
+                });
+            } else {
+                playerError.textContent = "Please select both a season and an episode.";
+            }
+        }
+
 
         async function showSearchContent() {
             content.innerHTML = `
@@ -503,17 +700,23 @@ function sendWebhookLog(action, userData = {}) {
                 }
 
                 for (const item of validResults.slice(0, 20)) {
-                    const mediaType = item.media_type === 'movie' ? 'movie' : 'tv'; // Use 'movie' or 'tv' for getImdbId
-                    const imdbId = await getImdbId(item.id, mediaType);
-
-                    if (imdbId) {
-                        const div = document.createElement("div");
-                        div.className = "movie";
-                        div.innerHTML = `
-                            <img src="${TMDB_IMAGE_BASE_URL}${item.poster_path}" alt="${item.title || item.name}">
-                            <div class="movie-title">${item.title || item.name} (${capitalize(mediaType)})</div>
-                        `;
-                        div.onclick = () => playMedia(imdbId, item.title || item.name);
+                    const mediaType = item.media_type; // 'movie' or 'tv'
+                    const div = document.createElement("div");
+                    div.className = "movie";
+                    div.innerHTML = `
+                        <img src="${TMDB_IMAGE_BASE_URL}${item.poster_path}" alt="${item.title || item.name}">
+                        <div class="movie-title">${item.title || item.name} (${capitalize(mediaType)})</div>
+                    `;
+                    
+                    if (mediaType === 'movie') {
+                        const imdbId = await getImdbId(item.id, mediaType);
+                        if (imdbId) {
+                            div.onclick = () => playMedia('movie', imdbId, item.title || item.name);
+                            searchResultsDiv.appendChild(div);
+                        }
+                    } else if (mediaType === 'tv') {
+                        // For TV shows, clicking on search result goes to TV show details page
+                        div.onclick = () => displayTvShowDetails(item.id, item.name);
                         searchResultsDiv.appendChild(div);
                     }
                 }
@@ -542,7 +745,7 @@ function sendWebhookLog(action, userData = {}) {
                     <li>Description of the copyrighted work</li>
                     <li>URL of infringing content</li>
                     <li>Statement of good faith belief</li>
-                    <li>Signature</li>
+                    <li><li>Signature</li>
                 </ul>
             `;
         }
@@ -553,7 +756,7 @@ function sendWebhookLog(action, userData = {}) {
                 <h1>About StreamX</h1>
                 <p>StreamX is a free and premium movie and TV show streaming platform.</p>
                 <p>Our mission is to provide users with a wide range of content in a user-friendly, ad-supported or ad-free environment depending on your subscription.</p>
-                <p>Content information is sourced from TMDb. Video playback relies on external third-party services like VidSrc (for movies).</p>
+                <p>Content information is sourced from TMDb. Video playback relies on external third-party services like VidSrc (for movies and TV shows).</p>
                 <p>Contact us at: <a href="mailto:support@streamx.com" target="_blank" rel="noopener noreferrer">support@streamx.com</a></p>
             `;
         }
@@ -573,7 +776,7 @@ function sendWebhookLog(action, userData = {}) {
             `;
         }
 
-  function login() {
+ function login() {
     const email = document.getElementById("emailInput").value;
     const pass = document.getElementById("passwordInput").value;
 
@@ -645,26 +848,30 @@ function sendWebhookLog(action, userData = {}) {
                 return;
             }
 
-            // Handle dynamic movie/TV show content
-            content.innerHTML = `<h1>${capitalize(hash === "home" ? "Popular Movies" : hash + " Movies")}</h1><div id="loader">Loading...</div>`;
+            content.innerHTML = `<div id="loader">Loading...</div>`;
             let genreId = null;
             let pageTitle = null;
+            let mediaType = 'movie'; // Default to movie
 
-            // Determine genreId from navLinks data-genre attribute
+            // Determine genreId and mediaType from navLinks data attributes
             for (const a of navLinks) {
                 if (a.getAttribute('href') === '#' + hash) {
                     genreId = a.dataset.genre || null;
-                    pageTitle = `${a.textContent} Movies`; // Use nav text for title
+                    mediaType = a.dataset.mediaType || 'movie';
+                    pageTitle = `${a.textContent}`;
                     break;
                 }
             }
 
             try {
-                // For this specific setup, all your nav categories are for movies.
-                // If you want TV shows, you'd need separate nav links for them and
-                // logic to determine `mediaType` ('movie' vs 'tv').
-                const movies = await fetchMediaData('movie', genreId);
-                await displayMediaGrid(movies, 'movie', pageTitle);
+                if (mediaType === 'movie') {
+                    const movies = await fetchMediaData('movie', genreId);
+                    await displayMediaGrid(movies, 'movie', pageTitle);
+                } else if (mediaType === 'tv') {
+                    // For general TV Shows page, fetch popular TV shows. Genre filtering for TV is more complex in TMDb.
+                    const tvShows = await fetchMediaData('tv', null); // Fetch popular TV shows
+                    await displayMediaGrid(tvShows, 'tv', pageTitle);
+                }
             } catch (e) {
                 content.innerHTML = `<div id="errorMsg">${e.message}</div>`;
             }
@@ -725,30 +932,6 @@ auth.onAuthStateChanged(user => {
             }
             // If auth.currentUser exists, onAuthStateChanged will trigger loadPage
         });
-
-       // --- One-Time Popup Logic for TV Shows ---
-document.addEventListener('DOMContentLoaded', () => {
-    const tvShowWarningPopup = document.getElementById('tvShowWarningPopup');
-    const closeTvWarningPopupBtn = document.getElementById('closeTvWarningPopup');
-
-    // Check if the user has seen the TV show warning this session
-    // Using sessionStorage for per-session display
-    const hasSeenTvWarning = sessionStorage.getItem('hasSeenTvShowWarning');
-
-    if (!hasSeenTvWarning) {
-        // If not seen, display the popup
-        tvShowWarningPopup.style.display = 'flex'; // Use flex to center
-    }
-
-    closeTvWarningPopupBtn.addEventListener('click', () => {
-        tvShowWarningPopup.style.display = 'none';
-        // Set a flag in sessionStorage so it doesn't show again this session
-        sessionStorage.setItem('hasSeenTvShowWarning', 'true');
-    });
-
-    // Optional: If you also have a "TV Shows" link in your nav, you might want to disable it or
-    // provide similar feedback when clicked. For now, this is a general popup.
-});
     </script>
 </body>
 </html>

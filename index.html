@@ -210,25 +210,6 @@
             color: #00ccff;
             margin-top: 0;
         }
-        .playback-options {
-            text-align: center;
-            margin: 20px auto;
-            display: none; /* Initially hidden */
-        }
-        .playback-options button {
-            background-color: #00ccff;
-            border: none;
-            color: black;
-            font-weight: bold;
-            padding: 10px 15px;
-            margin: 0 8px;
-            border-radius: 5px;
-            cursor: pointer;
-            transition: background-color 0.3s ease;
-        }
-        .playback-options button:hover {
-            background-color: #0099cc;
-        }
     </style>
 </head>
 <body>
@@ -265,12 +246,6 @@
     <div id="errorMsg"></div>
     <iframe id="player" src="" allowfullscreen sandbox="allow-scripts allow-same-origin" referrerpolicy="no-referrer"></iframe>
     <div id="playerError"></div>
-    <div id="playbackOptions" class="playback-options">
-        <p>If the video fails to load, try a different source:</p>
-        <button id="vidsrcBtn">VidSrc</button>
-        <button id="2embedBtn">2Embed</button>
-        <button id="flixhqBtn">FlixHQ</button>
-    </div>
 
     <footer id="footer">
         <button onclick="window.open('https://your-external-tos-link.com', '_blank', 'noopener')">Terms of Service</button>
@@ -328,7 +303,6 @@
         const footer = document.getElementById("footer");
         const header = document.getElementById("header");
         const grandOpeningBanner = document.getElementById("grandOpeningBanner");
-        const playbackOptions = document.getElementById('playbackOptions');
 
         // --- TMDb API Configuration ---
         const TMDB_API_KEY = "2e7af0b444be53c66db2c4bfb069b286";
@@ -347,7 +321,6 @@
             player.src = "";
             errorMsg.textContent = "";
             playerError.textContent = "";
-            playbackOptions.style.display = 'none'; // Hide playback options
         }
 
         // --- Core Content Loading Functions ---
@@ -437,7 +410,7 @@
                 if (mediaType === 'movie') {
                     const imdbId = await getImdbId(item.id, mediaType);
                     if (imdbId) {
-                        div.onclick = () => displayPlaybackOptions('movie', imdbId, item.title || item.name);
+                        div.onclick = () => playMedia('movie', imdbId, item.title || item.name);
                         grid.appendChild(div);
                     }
                 } else if (mediaType === 'tv') {
@@ -531,40 +504,19 @@
             }
         }
 
-        function displayPlaybackOptions(mediaType, imdbID, mediaTitle, seasonNumber = null, episodeNumber = null) {
+        function playMedia(mediaType, imdbID, mediaTitle, seasonNumber = null, episodeNumber = null) {
             clearMessages();
-            playerError.textContent = `Now loading from VidSrc. If the video fails, please try the other options.`;
-            playbackOptions.style.display = 'block';
-
-            // Define embed URLs for different sources
-            const vidsrcUrl = mediaType === 'movie' ?
-                `https://vidsrc.to/embed/movie/${imdbID}` :
-                `https://vidsrc.to/embed/tv/${imdbID}/${seasonNumber}/${episodeNumber}`;
-
-            const twoembedUrl = mediaType === 'movie' ?
-                `https://2embed.to/embed/movie/${imdbID}` :
-                `https://2embed.to/embed/tv/${imdbID}/${seasonNumber}/${episodeNumber}`;
             
-            const flixhqUrl = mediaType === 'movie' ?
-                `https://flixhq.to/embed/movie/${imdbID}` :
-                `https://flixhq.to/embed/tv/${imdbID}/${seasonNumber}/${episodeNumber}`;
+            const vidguardUrl = mediaType === 'movie' ?
+                `https://vidguard.to/embed/movie/${imdbID}` :
+                `https://vidguard.to/embed/tv/${imdbID}/${seasonNumber}/${episodeNumber}`;
 
-            // Attach click listeners to the buttons
-            document.getElementById('vidsrcBtn').onclick = () => playMedia(vidsrcUrl, mediaTitle, 'VidSrc');
-            document.getElementById('2embedBtn').onclick = () => playMedia(twoembedUrl, mediaTitle, '2Embed');
-            document.getElementById('flixhqBtn').onclick = () => playMedia(flixhqUrl, mediaTitle, 'FlixHQ');
-
-            // Initially try to load VidSrc
-            playMedia(vidsrcUrl, mediaTitle, 'VidSrc');
+            player.src = vidguardUrl;
+            player.style.display = "block";
+            playerError.textContent = `Now attempting to play: ${mediaTitle} from Vidguard.`;
 
             // Scroll to the player view
             window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
-        }
-        
-        function playMedia(sourceUrl, mediaTitle, sourceName) {
-            player.src = sourceUrl;
-            player.style.display = "block";
-            playerError.textContent = `Now attempting to play: ${mediaTitle} from ${sourceName}. If this fails, try another source below.`;
         }
 
         function playSelectedEpisode(tvId, tvTitle) {
@@ -577,7 +529,7 @@
             if (selectedSeason && selectedEpisode) {
                 getImdbId(tvId, 'tv').then(imdbId => {
                     if (imdbId) {
-                        displayPlaybackOptions('tv', imdbId, tvTitle, selectedSeason, selectedEpisode);
+                        playMedia('tv', imdbId, tvTitle, selectedSeason, selectedEpisode);
                     } else {
                         playerError.textContent = "Could not find IMDb ID for this TV show to play.";
                     }
@@ -646,7 +598,7 @@
                     if (mediaType === 'movie') {
                         const imdbId = await getImdbId(item.id, mediaType);
                         if (imdbId) {
-                            div.onclick = () => displayPlaybackOptions('movie', imdbId, item.title || item.name);
+                            div.onclick = () => playMedia('movie', imdbId, item.title || item.name);
                             searchResultsDiv.appendChild(div);
                         }
                     } else if (mediaType === 'tv') {
@@ -690,7 +642,7 @@
                 <h1>About StreamX</h1>
                 <p>StreamX is a free and premium movie and TV show streaming platform.</p>
                 <p>Our mission is to provide users with a wide range of content in a user-friendly, ad-supported or ad-free environment depending on your subscription.</p>
-                <p>Content information is sourced from TMDb. Video playback relies on external third-party services like VidSrc (for movies and TV shows).</p>
+                <p>Content information is sourced from TMDb. Video playback relies on external third-party services like Vidguard (for movies and TV shows).</p>
                 <p>Contact us at: <a href="mailto:support@streamx.com" target="_blank" rel="noopener noreferrer">support@streamx.com</a></p>
             `;
         }

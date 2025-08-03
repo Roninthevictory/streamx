@@ -330,8 +330,6 @@
         const grandOpeningBanner = document.getElementById("grandOpeningBanner");
         const playbackOptions = document.getElementById('playbackOptions');
 
-        let playerTimeout;
-
         // --- TMDb API Configuration ---
         const TMDB_API_KEY = "2e7af0b444be53c66db2c4bfb069b286";
         const TMDB_BASE_URL = "https://api.themoviedb.org/3";
@@ -345,7 +343,6 @@
         }
 
         function clearMessages() {
-            clearTimeout(playerTimeout);
             player.style.display = "none";
             player.src = "";
             errorMsg.textContent = "";
@@ -536,7 +533,7 @@
 
         function displayPlaybackOptions(mediaType, imdbID, mediaTitle, seasonNumber = null, episodeNumber = null) {
             clearMessages();
-            playerError.textContent = `Preparing to play: ${mediaTitle}${mediaType === 'tv' ? ` S${seasonNumber} E${episodeNumber}` : ''}. Please select a source below.`;
+            playerError.textContent = `Now loading from VidSrc. If the video fails, please try the other options.`;
             playbackOptions.style.display = 'block';
 
             // Define embed URLs for different sources
@@ -553,25 +550,21 @@
                 `https://flixhq.to/embed/tv/${imdbID}/${seasonNumber}/${episodeNumber}`;
 
             // Attach click listeners to the buttons
-            document.getElementById('vidsrcBtn').onclick = () => playMedia(vidsrcUrl, mediaTitle);
-            document.getElementById('2embedBtn').onclick = () => playMedia(twoembedUrl, mediaTitle);
-            document.getElementById('flixhqBtn').onclick = () => playMedia(flixhqUrl, mediaTitle);
+            document.getElementById('vidsrcBtn').onclick = () => playMedia(vidsrcUrl, mediaTitle, 'VidSrc');
+            document.getElementById('2embedBtn').onclick = () => playMedia(twoembedUrl, mediaTitle, '2Embed');
+            document.getElementById('flixhqBtn').onclick = () => playMedia(flixhqUrl, mediaTitle, 'FlixHQ');
 
             // Initially try to load VidSrc
-            playMedia(vidsrcUrl, mediaTitle);
+            playMedia(vidsrcUrl, mediaTitle, 'VidSrc');
 
             // Scroll to the player view
             window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
         }
         
-        function playMedia(sourceUrl, mediaTitle) {
+        function playMedia(sourceUrl, mediaTitle, sourceName) {
             player.src = sourceUrl;
             player.style.display = "block";
-            playerError.textContent = `Now attempting to play: ${mediaTitle}. If this fails, try another source below.`;
-            clearTimeout(playerTimeout);
-            playerTimeout = setTimeout(() => {
-                playerError.textContent = `Video may not be available on this source. Please try another playback option.`;
-            }, 7000);
+            playerError.textContent = `Now attempting to play: ${mediaTitle} from ${sourceName}. If this fails, try another source below.`;
         }
 
         function playSelectedEpisode(tvId, tvTitle) {

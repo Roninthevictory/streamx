@@ -89,7 +89,7 @@
         }
         #player {
             width: 100%;
-            height: 600px; /* Updated height */
+            height: 600px;
             border: none;
             border-radius: 10px;
             margin-top: 20px;
@@ -210,6 +210,25 @@
             color: #00ccff;
             margin-top: 0;
         }
+        .playback-options {
+            text-align: center;
+            margin: 20px auto;
+            display: none; /* Initially hidden */
+        }
+        .playback-options button {
+            background-color: #00ccff;
+            border: none;
+            color: black;
+            font-weight: bold;
+            padding: 10px 15px;
+            margin: 0 8px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+        .playback-options button:hover {
+            background-color: #0099cc;
+        }
     </style>
 </head>
 <body>
@@ -246,6 +265,12 @@
     <div id="errorMsg"></div>
     <iframe id="player" src="" allowfullscreen sandbox="allow-scripts allow-same-origin" referrerpolicy="no-referrer"></iframe>
     <div id="playerError"></div>
+    <div id="playbackOptions" class="playback-options">
+        <p>If the video fails to load, try a different source:</p>
+        <button id="vidsrcBtn">VidSrc</button>
+        <button id="2embedBtn">2Embed</button>
+        <button id="flixhqBtn">FlixHQ</button>
+    </div>
 
     <footer id="footer">
         <button onclick="window.open('https://your-external-tos-link.com', '_blank', 'noopener')">Terms of Service</button>
@@ -303,6 +328,7 @@
         const footer = document.getElementById("footer");
         const header = document.getElementById("header");
         const grandOpeningBanner = document.getElementById("grandOpeningBanner");
+        const playbackOptions = document.getElementById('playbackOptions');
 
         let playerTimeout;
 
@@ -324,6 +350,7 @@
             player.src = "";
             errorMsg.textContent = "";
             playerError.textContent = "";
+            playbackOptions.style.display = 'none'; // Hide playback options
         }
 
         // --- Core Content Loading Functions ---
@@ -413,7 +440,7 @@
                 if (mediaType === 'movie') {
                     const imdbId = await getImdbId(item.id, mediaType);
                     if (imdbId) {
-                        div.onclick = () => playMedia('movie', imdbId, item.title || item.name);
+                        div.onclick = () => displayPlaybackOptions('movie', imdbId, item.title || item.name);
                         grid.appendChild(div);
                     }
                 } else if (mediaType === 'tv') {
@@ -507,31 +534,43 @@
             }
         }
 
-
-        function playMedia(mediaType, imdbID, mediaTitle, seasonNumber = null, episodeNumber = null) {
+        function displayPlaybackOptions(mediaType, imdbID, mediaTitle, seasonNumber = null, episodeNumber = null) {
             clearMessages();
-            if (!imdbID || !/^tt\d+$/.test(imdbID)) {
-                errorMsg.textContent = "Invalid content ID, cannot load video.";
-                return;
-            }
+            playerError.textContent = `Preparing to play: ${mediaTitle}${mediaType === 'tv' ? ` S${seasonNumber} E${episodeNumber}` : ''}. Please select a source below.`;
+            playbackOptions.style.display = 'block';
 
-            let embedUrl = '';
-            if (mediaType === 'movie') {
-                embedUrl = `https://vidsrc.to/embed/movie/${imdbID}`;
-            } else if (mediaType === 'tv' && seasonNumber !== null && episodeNumber !== null) {
-                embedUrl = `https://vidsrc.to/embed/tv/${imdbID}/${seasonNumber}/${episodeNumber}`;
-            } else {
-                errorMsg.textContent = "Invalid parameters for TV show playback.";
-                return;
-            }
+            // Define embed URLs for different sources
+            const vidsrcUrl = mediaType === 'movie' ?
+                `https://vidsrc.to/embed/movie/${imdbID}` :
+                `https://vidsrc.to/embed/tv/${imdbID}/${seasonNumber}/${episodeNumber}`;
 
-            player.src = embedUrl;
-            player.style.display = "block";
+            const twoembedUrl = mediaType === 'movie' ?
+                `https://2embed.to/embed/movie/${imdbID}` :
+                `https://2embed.to/embed/tv/${imdbID}/${seasonNumber}/${episodeNumber}`;
+            
+            const flixhqUrl = mediaType === 'movie' ?
+                `https://flixhq.to/embed/movie/${imdbID}` :
+                `https://flixhq.to/embed/tv/${imdbID}/${seasonNumber}/${episodeNumber}`;
+
+            // Attach click listeners to the buttons
+            document.getElementById('vidsrcBtn').onclick = () => playMedia(vidsrcUrl, mediaTitle);
+            document.getElementById('2embedBtn').onclick = () => playMedia(twoembedUrl, mediaTitle);
+            document.getElementById('flixhqBtn').onclick = () => playMedia(flixhqUrl, mediaTitle);
+
+            // Initially try to load VidSrc
+            playMedia(vidsrcUrl, mediaTitle);
+
+            // Scroll to the player view
             window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
-
-            playerError.textContent = `Now attempting to play: ${mediaTitle}${mediaType === 'tv' ? ` S${seasonNumber} E${episodeNumber}` : ''}.`;
+        }
+        
+        function playMedia(sourceUrl, mediaTitle) {
+            player.src = sourceUrl;
+            player.style.display = "block";
+            playerError.textContent = `Now attempting to play: ${mediaTitle}. If this fails, try another source below.`;
+            clearTimeout(playerTimeout);
             playerTimeout = setTimeout(() => {
-                playerError.textContent = `If "${mediaTitle}${mediaType === 'tv' ? ` S${seasonNumber} E${episodeNumber}` : ''}" failed to load, this content might not be available on VidSrc.`;
+                playerError.textContent = `Video may not be available on this source. Please try another playback option.`;
             }, 7000);
         }
 
@@ -545,7 +584,7 @@
             if (selectedSeason && selectedEpisode) {
                 getImdbId(tvId, 'tv').then(imdbId => {
                     if (imdbId) {
-                        playMedia('tv', imdbId, tvTitle, selectedSeason, selectedEpisode);
+                        displayPlaybackOptions('tv', imdbId, tvTitle, selectedSeason, selectedEpisode);
                     } else {
                         playerError.textContent = "Could not find IMDb ID for this TV show to play.";
                     }
@@ -614,7 +653,7 @@
                     if (mediaType === 'movie') {
                         const imdbId = await getImdbId(item.id, mediaType);
                         if (imdbId) {
-                            div.onclick = () => playMedia('movie', imdbId, item.title || item.name);
+                            div.onclick = () => displayPlaybackOptions('movie', imdbId, item.title || item.name);
                             searchResultsDiv.appendChild(div);
                         }
                     } else if (mediaType === 'tv') {

@@ -1,829 +1,160 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-
-    <title>Streamx</title>
-    <meta name="description" content="StreamX Movies - Stream Smarter">
-
-    <link rel="apple-touch-icon" sizes="180x180" href="https://cdn.discordapp.com/attachments/1390972394138763304/1390972428238454784/ChatGPT_Image_Jul_5_2025_03_00_06_AM.png?ex=686a3385&is=6868e205&hm=af327a1fbe8f91dc6feb573cca3806cd794b2cfe67d76ed5ab1c0e10c0503ea3&">
-    <link rel="icon" type="image/png" sizes="32x32" href="https://cdn.discordapp.com/attachments/1390972394138763304/1390972428238454784/ChatGPT_Image_Jul_5_2025_03_00_06_AM.png?ex=686a3385&is=6868e205&hm=af327a1fbe8f91dc6feb573cca3806cd794b2cfe67d76ed5ab1c0e10c0503ea3&">
-    <link rel="icon" type="image/png" sizes="16x16" href="https://cdn.discordapp.com/attachments/1390972394138763304/1390972428238454784/ChatGPT_Image_Jul_5_2025_03_00_06_AM.png?ex=686a3385&is=6868e205&hm=af327a1fbe8f91dc6feb573cca3806cd794b2cfe67d76ed5ab1c0e10c0503ea3&">
-    <link rel="manifest" href="/site.webmanifest">
-    <link rel="icon" href="https://cdn.discordapp.com/attachments/1390972394138763304/1390972428238454784/ChatGPT_Image_Jul_5_2025_03_00_06_AM.png?ex=686a3385&is=6868e205&hm=af327a1fbe8f91dc6feb573cca3806cd794b2cfe67d76ed5ab1c0e10c0503ea3&" type="image/x-icon" />
-
-    <meta property="og:title" content="StreamX Movies">
-    <meta property="og:description" content="StreamX Movies - Stream Smarter">
-    <meta property="og:image" content="https://cdn.discordapp.com/attachments/1390972394138763304/1390972428238454784/ChatGPT_Image_Jul_5_2025_03_00_06_AM.png?ex=686a3385&is=6868e205&hm=af327a1fbe8f91dc6feb573cca3806cd794b2cfe67d76ed5ab1c0e10c0503ea3&">
-    <meta property="og:url" content="https://streamx.rvoinc.com/">
-    <meta property="og:type" content="website">
-
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Johnny3X | Rust Discord</title>
+    <!-- Tailwind CSS CDN for styling -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts for the Inter font -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap" rel="stylesheet">
     <style>
         body {
-            margin: 0;
-            font-family: 'Inter', Arial, sans-serif;
-            background-color: #111;
-            color: #fff;
-            display: flex;
-            flex-direction: column;
-            min-height: 100vh;
-        }
-        header {
-            background-color: #000;
-            padding: 15px 20px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            flex-wrap: wrap;
-        }
-        nav a {
-            color: #00ccff;
-            margin: 5px 10px;
-            text-decoration: none;
-            font-weight: bold;
-            cursor: pointer;
-        }
-        nav a:hover {
-            text-decoration: underline;
-        }
-        h1 {
-            text-align: center;
-            color: #00ccff;
-            margin: 20px 0;
-        }
-        #content {
-            padding: 20px;
-            min-height: 60vh;
-            flex-grow: 1;
-        }
-        .grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
-            gap: 20px;
-            margin-top: 20px;
-        }
-        .movie {
+            /* Fallback and initial background */
             background-color: #1a1a1a;
-            border-radius: 10px;
-            overflow: hidden;
-            cursor: pointer;
-            transition: transform 0.2s ease;
+            background-image: url('https://placehold.co/1920x1080/2a2a2a/1a1a1a?text=RUSTED+METAL+TEXTURE');
+            background-size: cover;
+            background-position: center;
+            font-family: 'Inter', sans-serif;
+            transition: background-image 0.5s ease-in-out; /* Smooth transition for the background */
         }
-        .movie:hover {
-            transform: scale(1.03);
+
+        .rusty-text {
+            color: #d17a22; /* Rust orange color */
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.5), -2px -2px 4px rgba(255,255,255,0.1);
         }
-        .movie img {
-            width: 100%;
-            display: block;
-            aspect-ratio: 2/3;
-            object-fit: cover;
+
+        .panel-bg {
+            background-color: rgba(30, 30, 30, 0.8);
+            border: 2px solid #555;
+            box-shadow: inset 0 0 10px rgba(0,0,0,0.5);
+            backdrop-filter: blur(5px);
         }
-        .movie-title {
-            text-align: center;
-            padding: 10px;
-            font-size: 14px;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
+
+        .glow-effect {
+            box-shadow: 0 0 15px rgba(209, 122, 34, 0.7);
+            transition: box-shadow 0.3s ease-in-out;
         }
-        #player {
-            width: 100%;
-            height: 600px;
-            border: none;
-            border-radius: 10px;
-            margin-top: 20px;
-            display: none;
-        }
-        #grandOpeningBanner {
-            background-color: #00ccff;
-            color: #000;
-            padding: 10px;
-            text-align: center;
-            font-weight: bold;
-            display: block;
-        }
-        #grandOpeningBanner a {
-            color: #000;
-            text-decoration: underline;
-        }
-        #authBar span {
-            font-weight: bold;
-            color: #00ccff;
-        }
-        footer {
-            background: #000;
-            padding: 15px 20px;
-            text-align: center;
-            border-top: 1px solid #222;
-        }
-        footer button {
-            background-color: #00ccff;
-            border: none;
-            color: black;
-            font-weight: bold;
-            padding: 10px 15px;
-            margin: 0 8px;
-            border-radius: 5px;
-            cursor: pointer;
-            transition: background-color 0.3s ease;
-        }
-        footer button:hover {
-            background-color: #0099cc;
-        }
-        a {
-            color: #00ccff;
-        }
-        #loader {
-            text-align: center;
-            padding: 20px;
-            font-size: 18px;
-            color: #00ccff;
-        }
-        #errorMsg {
-            text-align: center;
-            color: #ff5555;
-            margin-top: 20px;
-            font-weight: bold;
-        }
-        #playerError {
-            text-align: center;
-            color: #ff5555;
-            margin-top: 10px;
-            font-weight: bold;
-        }
-        .search-box {
-            text-align: center;
-            margin-top: 20px;
-        }
-        .search-box input {
-            padding: 10px;
-            width: 300px;
-            border-radius: 5px;
-            border: none;
-            background-color: #222;
-            color: white;
-        }
-        .search-box button {
-            padding: 10px 20px;
-            margin-left: 10px;
-            background-color: #00ccff;
-            color: black;
-            font-weight: bold;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-        }
-        .tv-details {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            text-align: center;
-        }
-        .tv-details img {
-            max-width: 300px;
-            border-radius: 10px;
-            margin-bottom: 20px;
-        }
-        .episode-selector {
-            margin-top: 20px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 15px;
-        }
-        .episode-selector select {
-            padding: 10px;
-            border-radius: 5px;
-            background-color: #222;
-            color: #fff;
-            border: 1px solid #444;
-        }
-        .episode-description {
-            background-color: #1a1a1a;
-            padding: 15px;
-            border-radius: 10px;
-            max-width: 600px;
-            text-align: left;
-        }
-        .episode-description h3 {
-            color: #00ccff;
-            margin-top: 0;
+
+        .glow-effect:hover {
+            box-shadow: 0 0 25px rgba(209, 122, 34, 1);
         }
     </style>
 </head>
-<body>
-    <header id="header">
-        <h2>🎬 StreamX</h2>
-        <div id="navTabs">
-            <nav>
-                <a href="#home" data-media-type="movie" data-genre="">Home</a>
-                <a href="#action" data-media-type="movie" data-genre="28">Action Movies</a>
-                <a href="#comedy" data-media-type="movie" data-genre="35">Comedy Movies</a>
-                <a href="#horror" data-media-type="movie" data-genre="27">Horror Movies</a>
-                <a href="#scifi" data-media-type="movie" data-genre="878">Sci-Fi Movies</a>
-                <a href="#tvshows" data-media-type="tv" data-genre="">TV Shows</a>
-                <a href="#search">Search</a>
-            </nav>
+<body class="flex items-center justify-center min-h-screen p-4">
+
+    <!-- Main container for the invite page content -->
+    <main class="w-full max-w-2xl text-center">
+
+        <!-- Main Title -->
+        <h1 class="text-6xl md:text-8xl font-bold rusty-text mb-8 animate-pulse-slow">
+            Johnny3X
+        </h1>
+
+        <!-- Themed content panel -->
+        <div class="panel-bg p-8 rounded-xl glow-effect">
+            
+            <h2 class="text-3xl md:text-4xl text-white font-bold mb-4">
+                Rust Community
+            </h2>
+
+            <!-- Container for member count widgets -->
+            <div class="flex flex-col md:flex-row justify-center gap-6 text-white mb-8">
+                
+                <!-- Online Members Widget -->
+                <div class="bg-gray-800 bg-opacity-70 p-4 rounded-lg flex-1">
+                    <p class="text-xl text-gray-400 font-medium">ONLINE</p>
+                    <p id="online-members" class="text-4xl font-bold rusty-text">
+                        ...
+                    </p>
+                </div>
+                
+                <!-- Total Members Widget -->
+                <div class="bg-gray-800 bg-opacity-70 p-4 rounded-lg flex-1">
+                    <p class="text-xl text-gray-400 font-medium">TOTAL</p>
+                    <p id="total-members" class="text-4xl font-bold rusty-text">
+                        ...
+                    </p>
+                </div>
+            </div>
+
+            <!-- Discord Invite Button -->
+            <a id="invite-button" href="https://discord.gg/johnny3x" target="_blank" class="block w-full py-4 text-2xl md:text-3xl font-bold text-white uppercase rounded-xl transition-all duration-300 transform scale-100 hover:scale-105 rusty-button glow-effect">
+                <span class="inline-block transition-transform duration-200 group-hover:scale-110">
+                    Join Discord
+                </span>
+            </a>
+
+            <!-- Fallback/loading message -->
+            <p id="loading-message" class="mt-4 text-gray-400">
+                Fetching server status...
+            </p>
         </div>
-        <div id="grandOpeningBanner">
-            🎉 Welcome to <strong>StreamX</strong> Grand Opening! Join our <a href="https://discord.gg/v9tS43Hamm" target="_blank">Discord</a> for the <strong>3 Massive Giveaways</strong> over the next 6 weeks!
-        </div>
-    </header>
 
-    <div id="authBar" style="background:#000; color:#0f0; padding:10px; text-align:right; display:none;">
-        Logged in as <span id="userEmail"></span> [<span id="userTierBadge"></span>]
-        <button onclick="logout()" style="margin-left:10px; background:red; color:white;">Logout</button>
-    </div>
-
-    <div id="content"></div>
-
-    <div id="adBanner" style="display:none; text-align:center; margin: 20px;">
-        <p>🚨 Ad: Enjoy ad-free by upgrading your pass! 🎉</p>
-        <img src="https://via.placeholder.com/728x90?text=Your+Ad+Here" alt="Ad Banner">
-    </div>
-
-    <div id="errorMsg"></div>
-    <iframe id="player" src="" allowfullscreen sandbox="allow-scripts allow-same-origin" referrerpolicy="no-referrer"></iframe>
-    <div id="playerError"></div>
-
-    <footer id="footer">
-        <button onclick="window.open('https://your-external-tos-link.com', '_blank', 'noopener')">Terms of Service</button>
-        <button onclick="showDMCA()">DMCA Takedown</button>
-        <button onclick="showAbout()">About StreamX</button>
-    </footer>
-
-    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-auth-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-database-compat.js"></script>
+    </main>
 
     <script>
-        // --- Firebase Configuration & Webhook Logging ---
-        const LOGIN_WEBHOOK_URL = "https://discord.com/api/webhooks/1391109624752767049/w1b1xlWTnGAjxZ3-kArs7kjWm-0Crpg4ZV__XQF3BeI65aLnN7ToP21EwXLGZ_CxMRT";
-
-        function sendWebhookLog(action, userData = {}) {
-            const time = new Date().toLocaleString();
-            const {
-                email = "Unknown",
-                uid = "Unknown",
-                tier = "Unknown"
-            } = userData;
-
-            const content = `📥 **${action.toUpperCase()} EVENT**\n**Email:** ${email}\n**UID:** \`${uid}\`\n**Tier:** ${tier}\n**Time:** ${time}`;
-
-            fetch(LOGIN_WEBHOOK_URL, {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ content })
-            }).catch(err => console.error("Webhook error:", err));
-        }
-
-        const firebaseConfig = {
-            apiKey: "AIzaSyCbMwMJKqLuAO7lUPUNh_5SiY5eXtPO-q4",
-            authDomain: "streamx-b6e05.firebaseapp.com",
-            databaseURL: "https://streamx-b6e05-default-rtdb.firebaseio.com",
-            projectId: "streamx-b6e05",
-            storageBucket: "streamx-b6e05.firebasestorage.app",
-            messagingSenderId: "293739854404",
-            appId: "1:293739854404:web:5013fb77841130bcd89a11"
-        };
-
-        firebase.initializeApp(firebaseConfig);
-        const auth = firebase.auth();
-        const database = firebase.database();
-
-        // --- DOM Elements ---
-        const content = document.getElementById("content");
-        const player = document.getElementById("player");
-        const errorMsg = document.getElementById("errorMsg");
-        const playerError = document.getElementById("playerError");
-        const navTabs = document.getElementById("navTabs");
-        const authBar = document.getElementById("authBar");
-        const adBanner = document.getElementById("adBanner");
-        const footer = document.getElementById("footer");
-        const header = document.getElementById("header");
-        const grandOpeningBanner = document.getElementById("grandOpeningBanner");
-
-        // --- TMDb API Configuration ---
-        const TMDB_API_KEY = "2e7af0b444be53c66db2c4bfb069b286";
-        const TMDB_BASE_URL = "https://api.themoviedb.org/3";
-        const TMDB_IMAGE_BASE_URL = "https://image.tmdb.org/t/p/w500";
-        const TMDB_BACKDROP_BASE_URL = "https://image.tmdb.org/t/p/w1280";
-
-        // --- Helper Functions ---
-        function capitalize(str) {
-            if (!str) return "";
-            return str.charAt(0).toUpperCase() + str.slice(1);
-        }
-
-        function clearMessages() {
-            player.style.display = "none";
-            player.src = "";
-            errorMsg.textContent = "";
-            playerError.textContent = "";
-        }
-
-        // --- Core Content Loading Functions ---
-        async function fetchMediaData(type, idOrQuery, isSearch = false) {
-            let url = '';
-            if (isSearch) {
-                url = `${TMDB_BASE_URL}/search/${type}?api_key=${TMDB_API_KEY}&query=${encodeURIComponent(idOrQuery)}`;
-            } else if (idOrQuery) {
-                url = `${TMDB_BASE_URL}/discover/${type}?api_key=${TMDB_API_KEY}&with_genres=${idOrQuery}&language=en-US&sort_by=popularity.desc&page=1`;
-            } else {
-                url = `${TMDB_BASE_URL}/${type}/popular?api_key=${TMDB_API_KEY}&language=en-US&page=1`;
-            }
-
-            try {
-                const res = await fetch(url);
-                if (!res.ok) {
-                    throw new Error(`HTTP error! status: ${res.status}`);
-                }
-                const data = await res.json();
-                return data.results;
-            } catch (e) {
-                console.error(`Fetch Error for ${type}:`, e);
-                throw new Error(`Failed to load ${type} data. Please try again later.`);
-            }
-        }
-
-        async function fetchTvShowDetails(tvId) {
-            try {
-                const res = await fetch(`${TMDB_BASE_URL}/tv/${tvId}?api_key=${TMDB_API_KEY}&append_to_response=seasons&language=en-US`);
-                if (!res.ok) {
-                    throw new Error(`HTTP error! status: ${res.status}`);
-                }
-                const data = await res.json();
-                return data;
-            } catch (e) {
-                console.error("Error fetching TV show details:", e);
-                throw new Error("Failed to load TV show details.");
-            }
-        }
-
-        async function fetchTvShowEpisodes(tvId, seasonNumber) {
-            try {
-                const res = await fetch(`${TMDB_BASE_URL}/tv/${tvId}/season/${seasonNumber}?api_key=${TMDB_API_KEY}&language=en-US`);
-                if (!res.ok) {
-                    throw new Error(`HTTP error! status: ${res.status}`);
-                }
-                const data = await res.json();
-                return data.episodes;
-            } catch (e) {
-                console.error("Error fetching TV show episodes:", e);
-                throw new Error("Failed to load TV show episodes.");
-            }
-        }
-
-        async function getImdbId(tmdbId, mediaType) {
-            try {
-                const res = await fetch(`${TMDB_BASE_URL}/${mediaType}/${tmdbId}/external_ids?api_key=${TMDB_API_KEY}`);
-                const data = await res.json();
-                return data.imdb_id;
-            } catch (e) {
-                console.error("Error fetching IMDb ID:", e);
-                return null;
-            }
-        }
-
-        async function displayMediaGrid(mediaItems, mediaType, title = "") {
-            clearMessages();
-
-            if (!mediaItems || mediaItems.length === 0) {
-                content.innerHTML = `<h1>${title || capitalize(mediaType)}</h1><div id="errorMsg">No content found.</div>`;
-                return;
-            }
-
-            content.innerHTML = `<h1>${title || capitalize(mediaType)}</h1><div class="grid" id="mediaGrid"></div>`;
-            const grid = document.getElementById("mediaGrid");
-
-            for (const item of mediaItems.slice(0, 20)) {
-                if (!item.poster_path) continue;
-
-                const div = document.createElement('div');
-                div.className = 'movie';
-                div.innerHTML = `
-                    <img src="${TMDB_IMAGE_BASE_URL}${item.poster_path}" alt="${item.title || item.name}">
-                    <div class="movie-title">${item.title || item.name}</div>
-                `;
-
-                if (mediaType === 'movie') {
-                    const imdbId = await getImdbId(item.id, mediaType);
-                    if (imdbId) {
-                        div.onclick = () => playMedia('movie', imdbId, item.title || item.name);
-                        grid.appendChild(div);
-                    }
-                } else if (mediaType === 'tv') {
-                    div.onclick = () => displayTvShowDetails(item.id, item.name);
-                    grid.appendChild(div);
-                }
-            }
-
-            if (grid.children.length === 0 && mediaItems.length > 0) {
-                errorMsg.textContent = `Could not find playable links for the displayed ${mediaType} content.`;
-            } else if (grid.children.length === 0) {
-                errorMsg.textContent = `No ${mediaType} content available.`;
-            }
-        }
-
-        async function displayTvShowDetails(tvId, tvTitle) {
-            clearMessages();
-            content.innerHTML = `<div id="loader">Loading TV show details...</div>`;
-
-            try {
-                const tvShow = await fetchTvShowDetails(tvId);
-                if (!tvShow) {
-                    throw new Error("TV show details not found.");
-                }
-
-                content.innerHTML = `
-                    <div class="tv-details">
-                        <img src="${TMDB_IMAGE_BASE_URL}${tvShow.poster_path}" alt="${tvShow.name}">
-                        <h2>${tvShow.name}</h2>
-                        <p>${tvShow.overview}</p>
-                        <div class="episode-selector">
-                            <label for="seasonSelect">Select Season:</label>
-                            <select id="seasonSelect"></select>
-                            <label for="episodeSelect">Select Episode:</label>
-                            <select id="episodeSelect"></select>
-                            <div class="episode-description" id="episodeDescription">
-                                <h3>Episode Description:</h3>
-                                <p id="episodeDescText">Select an episode to see its description.</p>
-                            </div>
-                            <button onclick="playSelectedEpisode(${tvShow.id}, '${tvShow.name}')" style="margin-top: 20px; padding: 10px 20px; background-color: #00ccff; color: black; border: none; border-radius: 5px; cursor: pointer; font-weight: bold;">Play Episode</button>
-                        </div>
-                    </div>
-                `;
-
-                const seasonSelect = document.getElementById('seasonSelect');
-                const episodeSelect = document.getElementById('episodeSelect');
-                const episodeDescText = document.getElementById('episodeDescText');
-
-                tvShow.seasons.forEach(season => {
-                    if (season.season_number > 0 && season.episode_count > 0) {
-                        const option = document.createElement('option');
-                        option.value = season.season_number;
-                        option.textContent = `Season ${season.season_number}`;
-                        seasonSelect.appendChild(option);
-                    }
-                });
-
-                const loadEpisodes = async () => {
-                    episodeSelect.innerHTML = '';
-                    episodeDescText.textContent = 'Select an episode to see its description.';
-                    const selectedSeason = seasonSelect.value;
-                    if (selectedSeason) {
-                        const episodes = await fetchTvShowEpisodes(tvShow.id, selectedSeason);
-                        episodes.forEach(episode => {
-                            const option = document.createElement('option');
-                            option.value = episode.episode_number;
-                            option.textContent = `E${episode.episode_number}: ${episode.name}`;
-                            option.dataset.overview = episode.overview || 'No description available.';
-                            episodeSelect.appendChild(option);
-                        });
-                        if (episodes.length > 0) {
-                            episodeDescText.textContent = episodes[0].overview || 'No description available.';
-                        }
-                    }
-                };
-
-                seasonSelect.addEventListener('change', loadEpisodes);
-
-                episodeSelect.addEventListener('change', () => {
-                    const selectedOption = episodeSelect.options[episodeSelect.selectedIndex];
-                    episodeDescText.textContent = selectedOption.dataset.overview;
-                });
-
-                if (tvShow.seasons.length > 0) {
-                    await loadEpisodes();
-                }
-
-            } catch (e) {
-                console.error("Error displaying TV show details:", e);
-                content.innerHTML = `<div id="errorMsg">${e.message}</div>`;
-            }
-        }
-
-        function playMedia(mediaType, imdbID, mediaTitle, seasonNumber = null, episodeNumber = null) {
-            clearMessages();
-            
-            const vidguardUrl = mediaType === 'movie' ?
-                `https://vidguard.to/embed/movie/${imdbID}` :
-                `https://vidguard.to/embed/tv/${imdbID}/${seasonNumber}/${episodeNumber}`;
-
-            player.src = vidguardUrl;
-            player.style.display = "block";
-            playerError.textContent = `Now attempting to play: ${mediaTitle} from Vidguard.`;
-
-            // Scroll to the player view
-            window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
-        }
-
-        function playSelectedEpisode(tvId, tvTitle) {
-            const seasonSelect = document.getElementById('seasonSelect');
-            const episodeSelect = document.getElementById('episodeSelect');
-
-            const selectedSeason = seasonSelect.value;
-            const selectedEpisode = episodeSelect.value;
-
-            if (selectedSeason && selectedEpisode) {
-                getImdbId(tvId, 'tv').then(imdbId => {
-                    if (imdbId) {
-                        playMedia('tv', imdbId, tvTitle, selectedSeason, selectedEpisode);
-                    } else {
-                        playerError.textContent = "Could not find IMDb ID for this TV show to play.";
-                    }
-                }).catch(e => {
-                    console.error("Error getting IMDb ID for TV show:", e);
-                    playerError.textContent = "Error preparing TV show playback.";
-                });
-            } else {
-                playerError.textContent = "Please select both a season and an episode.";
-            }
-        }
-
-        async function showSearchContent() {
-            content.innerHTML = `
-                <h1>🔍 Search StreamX</h1>
-                <div class="search-box">
-                    <input type="text" id="searchInput" placeholder="Search movies or TV shows..." />
-                    <button onclick="performSearch()">Search</button>
-                </div>
-                <div class="grid" id="searchResults"></div>
-            `;
-            document.getElementById('searchInput').focus();
-            document.getElementById('searchInput').addEventListener('keypress', function(e) {
-                if (e.key === 'Enter') {
-                    performSearch();
-                }
-            });
-        }
-
-        async function performSearch() {
-            clearMessages();
-            const query = document.getElementById("searchInput").value.trim();
-            const searchResultsDiv = document.getElementById("searchResults");
-
-            if (!query) {
-                searchResultsDiv.innerHTML = "";
-                return;
-            }
-            searchResultsDiv.innerHTML = "<div id='loader'>Searching...</div>";
-
-            try {
-                const url = `${TMDB_BASE_URL}/search/multi?api_key=${TMDB_API_KEY}&query=${encodeURIComponent(query)}`;
-                const res = await fetch(url);
-                if (!res.ok) throw new Error('Network response was not ok.');
-                const data = await res.json();
-
-                searchResultsDiv.innerHTML = "";
-                const validResults = data.results.filter(item =>
-                    (item.media_type === 'movie' || item.media_type === 'tv') && item.poster_path
-                );
-
-                if (validResults.length === 0) {
-                    searchResultsDiv.innerHTML = "<div id='errorMsg'>No results found for that query.</div>";
-                    return;
-                }
-
-                for (const item of validResults.slice(0, 20)) {
-                    const mediaType = item.media_type;
-                    const div = document.createElement("div");
-                    div.className = "movie";
-                    div.innerHTML = `
-                        <img src="${TMDB_IMAGE_BASE_URL}${item.poster_path}" alt="${item.title || item.name}">
-                        <div class="movie-title">${item.title || item.name} (${capitalize(mediaType)})</div>
-                    `;
-
-                    if (mediaType === 'movie') {
-                        const imdbId = await getImdbId(item.id, mediaType);
-                        if (imdbId) {
-                            div.onclick = () => playMedia('movie', imdbId, item.title || item.name);
-                            searchResultsDiv.appendChild(div);
-                        }
-                    } else if (mediaType === 'tv') {
-                        div.onclick = () => displayTvShowDetails(item.id, item.name);
-                        searchResultsDiv.appendChild(div);
-                    }
-                }
-                if (searchResultsDiv.children.length === 0 && validResults.length > 0) {
-                    searchResultsDiv.innerHTML = "<div id='errorMsg'>Could not find playable links for search results.</div>";
-                } else if (searchResultsDiv.children.length === 0) {
-                    searchResultsDiv.innerHTML = "<div id='errorMsg'>No results found.</div>";
-                }
-
-            } catch (e) {
-                console.error("Search error:", e);
-                searchResultsDiv.innerHTML = "<div id='errorMsg'>Failed to perform search. Try again.</div>";
-            }
-        }
-
-        // --- Static Pages ---
-        function showDMCA() {
-            clearMessages();
-            content.innerHTML = `
-                <h1>DMCA Takedown Request</h1>
-                <p>If you believe content on StreamX infringes your copyright, please submit a DMCA takedown request here.</p>
-                <p>Email: <a href="mailto:dmca@streamx.com" target="_blank" rel="noopener noreferrer">dmca@streamx.com</a></p>
-                <p>Include details such as:</p>
-                <ul>
-                    <li>Your contact information</li>
-                    <li>Description of the copyrighted work</li>
-                    <li>URL of infringing content</li>
-                    <li>Statement of good faith belief</li>
-                    <li>Signature</li>
-                </ul>
-            `;
-        }
-
-        function showAbout() {
-            clearMessages();
-            content.innerHTML = `
-                <h1>About StreamX</h1>
-                <p>StreamX is a free and premium movie and TV show streaming platform.</p>
-                <p>Our mission is to provide users with a wide range of content in a user-friendly, ad-supported or ad-free environment depending on your subscription.</p>
-                <p>Content information is sourced from TMDb. Video playback relies on external third-party services like Vidguard (for movies and TV shows).</p>
-                <p>Contact us at: <a href="mailto:support@streamx.com" target="_blank" rel="noopener noreferrer">support@streamx.com</a></p>
-            `;
-        }
-
-        // --- Authentication Functions ---
-        function showLoginForm() {
-            clearMessages();
-            content.innerHTML = `
-                <h1>Login to StreamX</h1>
-                <p style="text-align:center; color:#00ccff;">You have to join <a href="https://discord.gg/v9tS43Hamm" target="_blank" rel="noopener noreferrer">StreamX Discord</a> to get a login.</p>
-                <div style="text-align:center">
-                    <input id="emailInput" type="email" placeholder="Email" style="padding:10px; margin:5px;"><br>
-                    <input id="passwordInput" type="password" placeholder="Password" style="padding:10px; margin:5px;"><br>
-                    <button onclick="login()">Login</button>
-                </div>
-                <div id="authMsg" style="color:red; text-align:center; margin-top:10px;"></div>
-            `;
-        }
-
-        function login() {
-            const email = document.getElementById("emailInput").value;
-            const pass = document.getElementById("passwordInput").value;
-
-            auth.signInWithEmailAndPassword(email, pass)
-                .then((userCredential) => {
-                    const user = userCredential.user;
-                    console.log("Logged in:", user.email);
-                    sendWebhookLog("login_success", { email: user.email, uid: user.uid, tier: "N/A" });
-                    window.location.hash = '#home';
-                })
-                .catch((error) => {
-                    const authMsg = document.getElementById("authMsg");
-                    let errorMessage = "Login failed. Please check your credentials.";
-                    if (error.code === 'auth/user-not-found' || error.code === 'auth/wrong-password') {
-                        errorMessage = "Invalid email or password.";
-                    } else if (error.code === 'auth/invalid-email') {
-                        errorMessage = "Invalid email format.";
-                    }
-                    authMsg.textContent = errorMessage;
-                    console.error("Login error:", error);
-                    sendWebhookLog("login_failure", { email: email, error: error.message });
-                });
-        }
-
-        function logout() {
-            auth.signOut().then(() => {
-                console.log("Logged out");
-                sendWebhookLog("logout_success", { email: auth.currentUser?.email || "N/A" });
-                window.location.hash = '#login';
-            }).catch((error) => {
-                console.error("Logout error:", error);
-                sendWebhookLog("logout_failure", { email: auth.currentUser?.email || "N/A", error: error.message });
-            });
-        }
-
-        auth.onAuthStateChanged(user => {
-            const authBar = document.getElementById("authBar");
-            const userEmailSpan = document.getElementById("userEmail");
-            const userTierBadge = document.getElementById("userTierBadge");
-            const navTabs = document.getElementById("navTabs");
-
-            if (user) {
-                authBar.style.display = "block";
-                userEmailSpan.textContent = user.email;
-                database.ref('users/' + user.uid).once('value', (snapshot) => {
-                    const userData = snapshot.val();
-                    const tier = userData && userData.tier ? userData.tier : 'Free';
-                    userTierBadge.textContent = tier;
-                    adBanner.style.display = (tier === 'Free') ? 'block' : 'none';
-                    navTabs.style.display = "flex";
-                    sendWebhookLog("auth_state_change_logged_in", { email: user.email, uid: user.uid, tier: tier });
-                }).catch(error => {
-                    console.error("Error fetching user data:", error);
-                    userTierBadge.textContent = 'Free';
-                    adBanner.style.display = 'block';
-                    navTabs.style.display = "flex";
-                    sendWebhookLog("auth_state_change_logged_in_error", { email: user.email, uid: user.uid, error: error.message });
-                });
-            } else {
-                authBar.style.display = "none";
-                adBanner.style.display = "none";
-                navTabs.style.display = "none";
-                window.location.hash = '#login';
-                sendWebhookLog("auth_state_change_logged_out");
-            }
-        });
-
-        // --- Navigation Hashing ---
-        async function handleHashChange() {
-            const hash = window.location.hash;
-            clearMessages();
-
-            if (hash !== '#home' && grandOpeningBanner) {
-                grandOpeningBanner.style.display = 'none';
-            } else if (grandOpeningBanner) {
-                grandOpeningBanner.style.display = 'block';
-            }
-
-            switch (hash) {
-                case '#home':
-                    await displayMediaGrid(await fetchMediaData('movie'), 'movie', 'Popular Movies');
-                    break;
-                case '#action':
-                    await displayMediaGrid(await fetchMediaData('movie', '28'), 'movie', 'Action Movies');
-                    break;
-                case '#comedy':
-                    await displayMediaGrid(await fetchMediaData('movie', '35'), 'movie', 'Comedy Movies');
-                    break;
-                case '#horror':
-                    await displayMediaGrid(await fetchMediaData('movie', '27'), 'movie', 'Horror Movies');
-                    break;
-                case '#scifi':
-                    await displayMediaGrid(await fetchMediaData('movie', '878'), 'movie', 'Sci-Fi Movies');
-                    break;
-                case '#tvshows':
-                    await displayMediaGrid(await fetchMediaData('tv'), 'tv', 'Popular TV Shows');
-                    break;
-                case '#search':
-                    showSearchContent();
-                    break;
-                case '#login':
-                    showLoginForm();
-                    break;
-                default:
-                    if (!auth.currentUser) {
-                        showLoginForm();
-                    } else {
-                        window.location.hash = '#home';
-                    }
-                    break;
-            }
-        }
-
-        // Add event listeners for navigation
-        navTabs.querySelectorAll('a').forEach(link => {
-            link.addEventListener('click', async (event) => {
-                event.preventDefault();
-
-                const mediaType = link.dataset.mediaType;
-                const genreId = link.dataset.genre;
-                const targetHash = link.getAttribute('href');
-
-                if (targetHash === '#search') {
-                    showSearchContent();
-                } else if (targetHash === '#home') {
-                    await displayMediaGrid(await fetchMediaData('movie'), 'movie', 'Popular Movies');
-                } else if (mediaType && genreId !== undefined) {
-                    await displayMediaGrid(await fetchMediaData(mediaType, genreId), mediaType, `${link.textContent}`);
-                }
-                window.location.hash = targetHash;
-            });
-        });
-
-        // --- Video Player Popup Blocker Logic ---
+        // JavaScript to fetch and display Discord widget data
         document.addEventListener('DOMContentLoaded', () => {
-          const iframe = document.getElementById('player');
-          iframe.addEventListener('load', () => {
-            try {
-              iframe.contentWindow.eval(`
-                window.open = function() {
-                    console.log('[StreamX Popup Blocker] Popup attempt blocked.');
-                    return null;
-                };
-              `);
-              console.log('[StreamX Popup Blocker] window.open overridden.');
-            } catch (e) {
-              console.warn('[StreamX Popup Blocker] Cannot override window.open due to cross-origin restrictions. Sandbox will still block popups.');
-            }
-          });
-        });
+            const onlineMembersEl = document.getElementById('online-members');
+            const totalMembersEl = document.getElementById('total-members');
+            const loadingMessageEl = document.getElementById('loading-message');
+            const inviteButtonEl = document.getElementById('invite-button');
+            const discordInviteUrl = "https://discord.gg/johnny3x";
 
+            const inviteApiUrl = 'https://discord.com/api/v9/invites/johnny3x?with_counts=true';
 
-        // Listen for hash changes
-        window.addEventListener('hashchange', handleHashChange);
+            const fetchDiscordData = async () => {
+                try {
+                    const response = await fetch(inviteApiUrl);
+                    if (!response.ok) {
+                        throw new Error(`HTTP error! status: ${response.status}`);
+                    }
+                    const data = await response.json();
+                    
+                    if (data && data.approximate_presence_count !== undefined && data.approximate_member_count !== undefined) {
+                        onlineMembersEl.textContent = data.approximate_presence_count.toLocaleString();
+                        totalMembersEl.textContent = data.approximate_member_count.toLocaleString();
+                        loadingMessageEl.style.display = 'none';
 
-        // Initial load
-        window.addEventListener("load", () => {
-            if (!auth.currentUser) {
-                showLoginForm();
-            }
+                        // Check for the server banner and update the background
+                        if (data.guild && data.guild.banner) {
+                            const guildId = data.guild.id;
+                            const bannerHash = data.guild.banner;
+                            const bannerUrl = `https://cdn.discordapp.com/banners/${guildId}/${bannerHash}.webp?size=1024`;
+                            document.body.style.backgroundImage = `url('${bannerUrl}')`;
+                        }
+                    } else {
+                        throw new Error('Invalid widget data received.');
+                    }
+                } catch (error) {
+                    console.error('Could not fetch Discord widget data:', error);
+                    loadingMessageEl.textContent = 'Failed to load server data. Please try again later.';
+                    onlineMembersEl.textContent = '-';
+                    totalMembersEl.textContent = '-';
+                }
+            };
+
+            // Fetch the data initially and set up a refresh
+            fetchDiscordData();
+            // Refresh every 30 seconds
+            setInterval(fetchDiscordData, 30000); 
+
+            // Style the invite button with a gradient to look like rusted metal
+            inviteButtonEl.style.backgroundImage = 'linear-gradient(135deg, #a0522d, #8b4513, #a0522d)';
+            inviteButtonEl.style.transition = 'all 0.3s ease';
+
+            inviteButtonEl.addEventListener('mouseenter', () => {
+                inviteButtonEl.style.backgroundImage = 'linear-gradient(135deg, #d17a22, #b05c1e, #d17a22)';
+            });
+
+            inviteButtonEl.addEventListener('mouseleave', () => {
+                inviteButtonEl.style.backgroundImage = 'linear-gradient(135deg, #a0522d, #8b4513, #a0522d)';
+            });
         });
     </script>
 </body>
+</html>
 </html>

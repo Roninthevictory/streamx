@@ -4,8 +4,8 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-    <title>Streamx - Under Maintenance</title>
-    <meta name="description" content="StreamX Movies - Site Under Maintenance">
+    <title>Streamx</title>
+    <meta name="description" content="StreamX Movies - Stream Smarter">
 
     <link rel="apple-touch-icon" sizes="180x180" href="https://cdn.discordapp.com/attachments/1390972394138763304/1390972428238454784/ChatGPT_Image_Jul_5_2025_03_00_06_AM.png?ex=686a3385&is=6868e205&hm=af327a1fbe8f91dc6feb573cca3806cd794b2cfe67d76ed5ab1c0e10c0503ea3&">
     <link rel="icon" type="image/png" sizes="32x32" href="https://cdn.discordapp.com/attachments/1390972394138763304/1390972428238454784/ChatGPT_Image_Jul_5_2025_03_00_06_AM.png?ex=686a3385&is=6868e205&hm=af327a1fbe8f91dc6feb573cca3806cd794b2cfe67d76ed5ab1c0e10c0503ea3&">
@@ -13,8 +13,8 @@
     <link rel="manifest" href="/site.webmanifest">
     <link rel="icon" href="https://cdn.discordapp.com/attachments/1390972394138763304/1390972428238454784/ChatGPT_Image_Jul_5_2025_03_00_06_AM.png?ex=686a3385&is=6868e205&hm=af327a1fbe8f91dc6feb573cca3806cd794b2cfe67d76ed5ab1c0e10c0503ea3&" type="image/x-icon" />
 
-    <meta property="og:title" content="StreamX Movies - Under Maintenance">
-    <meta property="og:description" content="StreamX Movies - Site Under Maintenance">
+    <meta property="og:title" content="StreamX Movies">
+    <meta property="og:description" content="StreamX Movies - Stream Smarter">
     <meta property="og:image" content="https://cdn.discordapp.com/attachments/1390972394138763304/1390972428238454784/ChatGPT_Image_Jul_5_2025_03_00_06_AM.png?ex=686a3385&is=6868e205&hm=af327a1fbe8f91dc6feb573cca3806cd794b2cfe67d76ed5ab1c0e10c0503ea3&">
     <meta property="og:url" content="https://streamx.rvoinc.com/">
     <meta property="og:type" content="website">
@@ -22,103 +22,197 @@
     <style>
         body {
             margin: 0;
-            font-family: 'Inter', Arial, sans-serif; /* Changed to Inter for modern look */
+            font-family: 'Inter', Arial, sans-serif;
             background-color: #111;
             color: #fff;
             display: flex;
             flex-direction: column;
             min-height: 100vh;
-            justify-content: center; /* Center content vertically */
-            align-items: center; /* Center content horizontally */
+        }
+        header {
+            background-color: #000;
+            padding: 15px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+        nav a {
+            color: #00ccff;
+            margin: 5px 10px;
+            text-decoration: none;
+            font-weight: bold;
+            cursor: pointer;
+        }
+        nav a:hover {
+            text-decoration: underline;
+        }
+        h1 {
             text-align: center;
+            color: #00ccff;
+            margin: 20px 0;
         }
-        /* Hide all main content when in maintenance mode */
-        #header, #authBar, #content, #adBanner, #errorMsg, #player, #playerError, #footer, #grandOpeningBanner {
-            display: none !important; /* Use !important to override inline styles */
+        #content {
+            padding: 20px;
+            min-height: 60vh;
+            flex-grow: 1;
         }
-
-        .maintenance-container {
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+        .movie {
+            background-color: #1a1a1a;
+            border-radius: 10px;
+            overflow: hidden;
+            cursor: pointer;
+            transition: transform 0.2s ease;
+        }
+        .movie:hover {
+            transform: scale(1.03);
+        }
+        .movie img {
+            width: 100%;
+            display: block;
+            aspect-ratio: 2/3;
+            object-fit: cover;
+        }
+        .movie-title {
+            text-align: center;
+            padding: 10px;
+            font-size: 14px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        #player {
+            width: 100%;
+            height: 600px; /* Updated height */
+            border: none;
+            border-radius: 10px;
+            margin-top: 20px;
+            display: none;
+        }
+        #grandOpeningBanner {
+            background-color: #00ccff;
+            color: #000;
+            padding: 10px;
+            text-align: center;
+            font-weight: bold;
+            display: block;
+        }
+        #grandOpeningBanner a {
+            color: #000;
+            text-decoration: underline;
+        }
+        #authBar span {
+            font-weight: bold;
+            color: #00ccff;
+        }
+        footer {
+            background: #000;
+            padding: 15px 20px;
+            text-align: center;
+            border-top: 1px solid #222;
+        }
+        footer button {
+            background-color: #00ccff;
+            border: none;
+            color: black;
+            font-weight: bold;
+            padding: 10px 15px;
+            margin: 0 8px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+        footer button:hover {
+            background-color: #0099cc;
+        }
+        a {
+            color: #00ccff;
+        }
+        #loader {
+            text-align: center;
+            padding: 20px;
+            font-size: 18px;
+            color: #00ccff;
+        }
+        #errorMsg {
+            text-align: center;
+            color: #ff5555;
+            margin-top: 20px;
+            font-weight: bold;
+        }
+        #playerError {
+            text-align: center;
+            color: #ff5555;
+            margin-top: 10px;
+            font-weight: bold;
+        }
+        .search-box {
+            text-align: center;
+            margin-top: 20px;
+        }
+        .search-box input {
+            padding: 10px;
+            width: 300px;
+            border-radius: 5px;
+            border: none;
+            background-color: #222;
+            color: white;
+        }
+        .search-box button {
+            padding: 10px 20px;
+            margin-left: 10px;
+            background-color: #00ccff;
+            color: black;
+            font-weight: bold;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        .tv-details {
             display: flex;
             flex-direction: column;
-            justify-content: center;
             align-items: center;
-            min-height: 100vh; /* Take full viewport height */
-            width: 100%;
-            padding: 20px;
-            box-sizing: border-box;
+            text-align: center;
         }
-
-        .maintenance-box {
+        .tv-details img {
+            max-width: 300px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+        }
+        .episode-selector {
+            margin-top: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 15px;
+        }
+        .episode-selector select {
+            padding: 10px;
+            border-radius: 5px;
+            background-color: #222;
+            color: #fff;
+            border: 1px solid #444;
+        }
+        .episode-description {
             background-color: #1a1a1a;
-            border-radius: 15px; /* More rounded corners */
-            padding: 40px;
-            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.6);
+            padding: 15px;
+            border-radius: 10px;
             max-width: 600px;
-            width: 95%;
-            border: 2px solid #00ccff; /* Accent border */
+            text-align: left;
         }
-
-        .maintenance-box h1 {
+        .episode-description h3 {
             color: #00ccff;
-            font-size: 2.8em; /* Larger heading */
-            margin-bottom: 20px;
-            text-shadow: 0 0 10px rgba(0, 204, 255, 0.5); /* Subtle glow */
-        }
-
-        .maintenance-box p {
-            font-size: 1.2em;
-            line-height: 1.6;
-            margin-bottom: 25px;
-            color: #ccc;
-        }
-
-        .maintenance-box .icon {
-            font-size: 4em; /* Large icon */
-            color: #00ccff;
-            margin-bottom: 20px;
-            animation: pulse 2s infinite alternate; /* Simple pulse animation */
-        }
-
-        @keyframes pulse {
-            from {
-                transform: scale(1);
-                opacity: 0.8;
-            }
-            to {
-                transform: scale(1.05);
-                opacity: 1;
-            }
-        }
-
-        /* Responsive adjustments */
-        @media (max-width: 600px) {
-            .maintenance-box {
-                padding: 25px;
-            }
-            .maintenance-box h1 {
-                font-size: 2em;
-            }
-            .maintenance-box p {
-                font-size: 1em;
-            }
-            .maintenance-box .icon {
-                font-size: 3em;
-            }
+            margin-top: 0;
         }
     </style>
 </head>
 <body>
-    <!-- Maintenance Message Container -->
-    <div id="maintenanceMessage" class="maintenance-container">
-        <div class="maintenance-box">
-            <div class="icon">⚙️</div> <!-- Gear icon for maintenance -->
-            <h1>Site Under Maintenance</h1>
-            <p>We're currently performing essential updates to improve your StreamX experience. We apologize for any inconvenience.</p>
-            <p>Please check back soon! We appreciate your patience.</p>
-        </div>
-    </div>
-
-    <!-- Original content (hidden by CSS when maintenance mode is active) -->
     <header id="header">
         <h2>🎬 StreamX</h2>
         <div id="navTabs">
@@ -137,20 +231,20 @@
         </div>
     </header>
 
-    <div id="authBar">
+    <div id="authBar" style="background:#000; color:#0f0; padding:10px; text-align:right; display:none;">
         Logged in as <span id="userEmail"></span> [<span id="userTierBadge"></span>]
         <button onclick="logout()" style="margin-left:10px; background:red; color:white;">Logout</button>
     </div>
 
     <div id="content"></div>
 
-    <div id="adBanner">
+    <div id="adBanner" style="display:none; text-align:center; margin: 20px;">
         <p>🚨 Ad: Enjoy ad-free by upgrading your pass! 🎉</p>
         <img src="https://via.placeholder.com/728x90?text=Your+Ad+Here" alt="Ad Banner">
     </div>
 
     <div id="errorMsg"></div>
-    <iframe id="player" src="" allowfullscreen></iframe>
+    <iframe id="player" src="" allowfullscreen sandbox="allow-scripts allow-same-origin" referrerpolicy="no-referrer"></iframe>
     <div id="playerError"></div>
 
     <footer id="footer">
@@ -164,7 +258,7 @@
     <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-database-compat.js"></script>
 
     <script>
-        // --- Firebase Configuration ---
+        // --- Firebase Configuration & Webhook Logging ---
         const LOGIN_WEBHOOK_URL = "https://discord.com/api/webhooks/1391109624752767049/w1b1xlWTnGAjxZ3-kArs7kjWm-0Crpg4ZV__XQF3BeI65aLnN7ToP21EwXLGZ_CxMRT";
 
         function sendWebhookLog(action, userData = {}) {
@@ -203,47 +297,20 @@
         const player = document.getElementById("player");
         const errorMsg = document.getElementById("errorMsg");
         const playerError = document.getElementById("playerError");
-        const navTabs = document.getElementById("navTabs"); // Get the navTabs div
-        const authBar = document.getElementById("authBar"); // Get the authBar div
-        const adBanner = document.getElementById("adBanner"); // Get the adBanner div
-        const footer = document.getElementById("footer"); // Get the footer
-        const header = document.getElementById("header"); // Get the header
-        const grandOpeningBanner = document.getElementById("grandOpeningBanner"); // Get the grandOpeningBanner
+        const navTabs = document.getElementById("navTabs");
+        const authBar = document.getElementById("authBar");
+        const adBanner = document.getElementById("adBanner");
+        const footer = document.getElementById("footer");
+        const header = document.getElementById("header");
+        const grandOpeningBanner = document.getElementById("grandOpeningBanner");
 
-        let playerTimeout; // For managing video playback timeout
+        let playerTimeout;
 
         // --- TMDb API Configuration ---
-        const TMDB_API_KEY = "2e7af0b444be53c66db2c4bfb069b286"; // <<<<<<<<<<<<<<<< REPLACE THIS WITH YOUR ACTUAL TMDB API KEY
+        const TMDB_API_KEY = "2e7af0b444be53c66db2c4bfb069b286";
         const TMDB_BASE_URL = "https://api.themoviedb.org/3";
-        const TMDB_IMAGE_BASE_URL = "https://image.tmdb.org/t/p/w500"; // For movie/TV show posters
-        const TMDB_BACKDROP_BASE_URL = "https://image.tmdb.org/t/p/w1280"; // For TV show backdrops
-
-        // --- Maintenance Mode Flag ---
-        const isMaintenanceMode = true; // Set to true to activate maintenance page
-
-        // Function to toggle visibility of main content based on maintenance mode
-        function toggleMainContentVisibility() {
-            const mainContentElements = [
-                header, navTabs, authBar, content, adBanner, errorMsg, player, playerError, footer, grandOpeningBanner
-            ];
-            const maintenanceMessage = document.getElementById("maintenanceMessage");
-
-            if (isMaintenanceMode) {
-                mainContentElements.forEach(el => {
-                    if (el) el.style.display = 'none';
-                });
-                if (maintenanceMessage) maintenanceMessage.style.display = 'flex'; // Show maintenance message
-            } else {
-                // If not in maintenance mode, show original elements as per their default display or JS logic
-                // This part of the code would be expanded if you wanted to switch modes dynamically
-                // For now, we are just ensuring they are hidden if maintenance is true.
-                if (maintenanceMessage) maintenanceMessage.style.display = 'none'; // Hide maintenance message
-            }
-        }
-
-        // Call the toggle function on page load
-        document.addEventListener('DOMContentLoaded', toggleMainContentVisibility);
-
+        const TMDB_IMAGE_BASE_URL = "https://image.tmdb.org/t/p/w500";
+        const TMDB_BACKDROP_BASE_URL = "https://image.tmdb.org/t/p/w1280";
 
         // --- Helper Functions ---
         function capitalize(str) {
@@ -261,7 +328,6 @@
 
         // --- Core Content Loading Functions ---
         async function fetchMediaData(type, idOrQuery, isSearch = false) {
-            if (isMaintenanceMode) return []; // Prevent fetching if in maintenance
             let url = '';
             if (isSearch) {
                 url = `${TMDB_BASE_URL}/search/${type}?api_key=${TMDB_API_KEY}&query=${encodeURIComponent(idOrQuery)}`;
@@ -285,7 +351,6 @@
         }
 
         async function fetchTvShowDetails(tvId) {
-            if (isMaintenanceMode) return null; // Prevent fetching if in maintenance
             try {
                 const res = await fetch(`${TMDB_BASE_URL}/tv/${tvId}?api_key=${TMDB_API_KEY}&append_to_response=seasons&language=en-US`);
                 if (!res.ok) {
@@ -300,7 +365,6 @@
         }
 
         async function fetchTvShowEpisodes(tvId, seasonNumber) {
-            if (isMaintenanceMode) return []; // Prevent fetching if in maintenance
             try {
                 const res = await fetch(`${TMDB_BASE_URL}/tv/${tvId}/season/${seasonNumber}?api_key=${TMDB_API_KEY}&language=en-US`);
                 if (!res.ok) {
@@ -315,7 +379,6 @@
         }
 
         async function getImdbId(tmdbId, mediaType) {
-            if (isMaintenanceMode) return null; // Prevent fetching if in maintenance
             try {
                 const res = await fetch(`${TMDB_BASE_URL}/${mediaType}/${tmdbId}/external_ids?api_key=${TMDB_API_KEY}`);
                 const data = await res.json();
@@ -327,8 +390,7 @@
         }
 
         async function displayMediaGrid(mediaItems, mediaType, title = "") {
-            if (isMaintenanceMode) return; // Do nothing if in maintenance
-            clearMessages(); // Clear any existing messages or player
+            clearMessages();
 
             if (!mediaItems || mediaItems.length === 0) {
                 content.innerHTML = `<h1>${title || capitalize(mediaType)}</h1><div id="errorMsg">No content found.</div>`;
@@ -338,11 +400,11 @@
             content.innerHTML = `<h1>${title || capitalize(mediaType)}</h1><div class="grid" id="mediaGrid"></div>`;
             const grid = document.getElementById("mediaGrid");
 
-            for (const item of mediaItems.slice(0, 20)) { // Limit to 20 items for initial load
+            for (const item of mediaItems.slice(0, 20)) {
                 if (!item.poster_path) continue;
 
                 const div = document.createElement('div');
-                div.className = 'movie'; // Keeping .movie class as it's styled similarly
+                div.className = 'movie';
                 div.innerHTML = `
                     <img src="${TMDB_IMAGE_BASE_URL}${item.poster_path}" alt="${item.title || item.name}">
                     <div class="movie-title">${item.title || item.name}</div>
@@ -368,7 +430,6 @@
         }
 
         async function displayTvShowDetails(tvId, tvTitle) {
-            if (isMaintenanceMode) return; // Do nothing if in maintenance
             clearMessages();
             content.innerHTML = `<div id="loader">Loading TV show details...</div>`;
 
@@ -401,7 +462,6 @@
                 const episodeSelect = document.getElementById('episodeSelect');
                 const episodeDescText = document.getElementById('episodeDescText');
 
-                // Populate seasons
                 tvShow.seasons.forEach(season => {
                     if (season.season_number > 0 && season.episode_count > 0) {
                         const option = document.createElement('option');
@@ -411,9 +471,8 @@
                     }
                 });
 
-                // Function to load episodes for the selected season
                 const loadEpisodes = async () => {
-                    episodeSelect.innerHTML = ''; // Clear previous episodes
+                    episodeSelect.innerHTML = '';
                     episodeDescText.textContent = 'Select an episode to see its description.';
                     const selectedSeason = seasonSelect.value;
                     if (selectedSeason) {
@@ -431,16 +490,13 @@
                     }
                 };
 
-                // Event listener for season change
                 seasonSelect.addEventListener('change', loadEpisodes);
 
-                // Event listener for episode change to update description
                 episodeSelect.addEventListener('change', () => {
                     const selectedOption = episodeSelect.options[episodeSelect.selectedIndex];
                     episodeDescText.textContent = selectedOption.dataset.overview;
                 });
 
-                // Load episodes for the first season by default
                 if (tvShow.seasons.length > 0) {
                     await loadEpisodes();
                 }
@@ -453,7 +509,6 @@
 
 
         function playMedia(mediaType, imdbID, mediaTitle, seasonNumber = null, episodeNumber = null) {
-            if (isMaintenanceMode) return; // Do nothing if in maintenance
             clearMessages();
             if (!imdbID || !/^tt\d+$/.test(imdbID)) {
                 errorMsg.textContent = "Invalid content ID, cannot load video.";
@@ -472,18 +527,15 @@
 
             player.src = embedUrl;
             player.style.display = "block";
-            // Scroll to player view
             window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
 
             playerError.textContent = `Now attempting to play: ${mediaTitle}${mediaType === 'tv' ? ` S${seasonNumber} E${episodeNumber}` : ''}.`;
-            // After a few seconds, show message if video might not be available
             playerTimeout = setTimeout(() => {
                 playerError.textContent = `If "${mediaTitle}${mediaType === 'tv' ? ` S${seasonNumber} E${episodeNumber}` : ''}" failed to load, this content might not be available on VidSrc.`;
             }, 7000);
         }
 
         function playSelectedEpisode(tvId, tvTitle) {
-            if (isMaintenanceMode) return; // Do nothing if in maintenance
             const seasonSelect = document.getElementById('seasonSelect');
             const episodeSelect = document.getElementById('episodeSelect');
 
@@ -506,9 +558,7 @@
             }
         }
 
-
         async function showSearchContent() {
-            if (isMaintenanceMode) return; // Do nothing if in maintenance
             content.innerHTML = `
                 <h1>🔍 Search StreamX</h1>
                 <div class="search-box">
@@ -526,7 +576,6 @@
         }
 
         async function performSearch() {
-            if (isMaintenanceMode) return; // Do nothing if in maintenance
             clearMessages();
             const query = document.getElementById("searchInput").value.trim();
             const searchResultsDiv = document.getElementById("searchResults");
@@ -543,7 +592,7 @@
                 if (!res.ok) throw new Error('Network response was not ok.');
                 const data = await res.json();
 
-                searchResultsDiv.innerHTML = ""; // Clear loader
+                searchResultsDiv.innerHTML = "";
                 const validResults = data.results.filter(item =>
                     (item.media_type === 'movie' || item.media_type === 'tv') && item.poster_path
                 );
@@ -554,7 +603,7 @@
                 }
 
                 for (const item of validResults.slice(0, 20)) {
-                    const mediaType = item.media_type; // 'movie' or 'tv'
+                    const mediaType = item.media_type;
                     const div = document.createElement("div");
                     div.className = "movie";
                     div.innerHTML = `
@@ -569,7 +618,6 @@
                             searchResultsDiv.appendChild(div);
                         }
                     } else if (mediaType === 'tv') {
-                        // For TV shows, clicking on search result goes to TV show details page
                         div.onclick = () => displayTvShowDetails(item.id, item.name);
                         searchResultsDiv.appendChild(div);
                     }
@@ -588,7 +636,6 @@
 
         // --- Static Pages ---
         function showDMCA() {
-            if (isMaintenanceMode) return; // Do nothing if in maintenance
             clearMessages();
             content.innerHTML = `
                 <h1>DMCA Takedown Request</h1>
@@ -606,7 +653,6 @@
         }
 
         function showAbout() {
-            if (isMaintenanceMode) return; // Do nothing if in maintenance
             clearMessages();
             content.innerHTML = `
                 <h1>About StreamX</h1>
@@ -619,7 +665,6 @@
 
         // --- Authentication Functions ---
         function showLoginForm() {
-            if (isMaintenanceMode) return; // Do nothing if in maintenance
             clearMessages();
             content.innerHTML = `
                 <h1>Login to StreamX</h1>
@@ -634,7 +679,6 @@
         }
 
         function login() {
-            if (isMaintenanceMode) return; // Do nothing if in maintenance
             const email = document.getElementById("emailInput").value;
             const pass = document.getElementById("passwordInput").value;
 
@@ -642,9 +686,8 @@
                 .then((userCredential) => {
                     const user = userCredential.user;
                     console.log("Logged in:", user.email);
-                    sendWebhookLog("login_success", { email: user.email, uid: user.uid, tier: "N/A" }); // Tier info not available here
-                    // Redirect or update UI
-                    window.location.hash = '#home'; // Go to home after login
+                    sendWebhookLog("login_success", { email: user.email, uid: user.uid, tier: "N/A" });
+                    window.location.hash = '#home';
                 })
                 .catch((error) => {
                     const authMsg = document.getElementById("authMsg");
@@ -664,7 +707,7 @@
             auth.signOut().then(() => {
                 console.log("Logged out");
                 sendWebhookLog("logout_success", { email: auth.currentUser?.email || "N/A" });
-                window.location.hash = '#login'; // Go to login page after logout
+                window.location.hash = '#login';
             }).catch((error) => {
                 console.error("Logout error:", error);
                 sendWebhookLog("logout_failure", { email: auth.currentUser?.email || "N/A", error: error.message });
@@ -677,46 +720,37 @@
             const userTierBadge = document.getElementById("userTierBadge");
             const navTabs = document.getElementById("navTabs");
 
-            if (user && !isMaintenanceMode) {
+            if (user) {
                 authBar.style.display = "block";
                 userEmailSpan.textContent = user.email;
-                // Fetch user tier from Firebase Realtime Database
                 database.ref('users/' + user.uid).once('value', (snapshot) => {
                     const userData = snapshot.val();
                     const tier = userData && userData.tier ? userData.tier : 'Free';
                     userTierBadge.textContent = tier;
                     adBanner.style.display = (tier === 'Free') ? 'block' : 'none';
-                    navTabs.style.display = "flex"; // Show nav tabs if logged in
+                    navTabs.style.display = "flex";
                     sendWebhookLog("auth_state_change_logged_in", { email: user.email, uid: user.uid, tier: tier });
                 }).catch(error => {
                     console.error("Error fetching user data:", error);
-                    userTierBadge.textContent = 'Free'; // Default to Free on error
+                    userTierBadge.textContent = 'Free';
                     adBanner.style.display = 'block';
                     navTabs.style.display = "flex";
                     sendWebhookLog("auth_state_change_logged_in_error", { email: user.email, uid: user.uid, error: error.message });
                 });
             } else {
                 authBar.style.display = "none";
-                adBanner.style.display = "none"; // Hide ad banner if logged out
-                navTabs.style.display = "none"; // Hide nav tabs if logged out
-                if (!isMaintenanceMode) {
-                    window.location.hash = '#login'; // Redirect to login if not logged in and not in maintenance
-                    sendWebhookLog("auth_state_change_logged_out");
-                }
+                adBanner.style.display = "none";
+                navTabs.style.display = "none";
+                window.location.hash = '#login';
+                sendWebhookLog("auth_state_change_logged_out");
             }
         });
 
         // --- Navigation Hashing ---
-        function handleHashChange() {
-            if (isMaintenanceMode) {
-                document.getElementById("maintenanceMessage").style.display = 'flex';
-                return; // Do nothing else if in maintenance
-            }
-
+        async function handleHashChange() {
             const hash = window.location.hash;
-            clearMessages(); // Clear messages on hash change
+            clearMessages();
 
-            // Hide the grand opening banner on other pages
             if (hash !== '#home' && grandOpeningBanner) {
                 grandOpeningBanner.style.display = 'none';
             } else if (grandOpeningBanner) {
@@ -725,22 +759,22 @@
 
             switch (hash) {
                 case '#home':
-                    displayMediaGrid(await fetchMediaData('movie'), 'movie', 'Popular Movies');
+                    await displayMediaGrid(await fetchMediaData('movie'), 'movie', 'Popular Movies');
                     break;
                 case '#action':
-                    displayMediaGrid(await fetchMediaData('movie', '28'), 'movie', 'Action Movies');
+                    await displayMediaGrid(await fetchMediaData('movie', '28'), 'movie', 'Action Movies');
                     break;
                 case '#comedy':
-                    displayMediaGrid(await fetchMediaData('movie', '35'), 'movie', 'Comedy Movies');
+                    await displayMediaGrid(await fetchMediaData('movie', '35'), 'movie', 'Comedy Movies');
                     break;
                 case '#horror':
-                    displayMediaGrid(await fetchMediaData('movie', '27'), 'movie', 'Horror Movies');
+                    await displayMediaGrid(await fetchMediaData('movie', '27'), 'movie', 'Horror Movies');
                     break;
                 case '#scifi':
-                    displayMediaGrid(await fetchMediaData('movie', '878'), 'movie', 'Sci-Fi Movies');
+                    await displayMediaGrid(await fetchMediaData('movie', '878'), 'movie', 'Sci-Fi Movies');
                     break;
                 case '#tvshows':
-                    displayMediaGrid(await fetchMediaData('tv'), 'tv', 'Popular TV Shows');
+                    await displayMediaGrid(await fetchMediaData('tv'), 'tv', 'Popular TV Shows');
                     break;
                 case '#search':
                     showSearchContent();
@@ -752,7 +786,7 @@
                     if (!auth.currentUser) {
                         showLoginForm();
                     } else {
-                        window.location.hash = '#home'; // Default to home if logged in
+                        window.location.hash = '#home';
                     }
                     break;
             }
@@ -761,8 +795,7 @@
         // Add event listeners for navigation
         navTabs.querySelectorAll('a').forEach(link => {
             link.addEventListener('click', async (event) => {
-                event.preventDefault(); // Prevent default anchor behavior
-                if (isMaintenanceMode) return; // Do nothing if in maintenance
+                event.preventDefault();
 
                 const mediaType = link.dataset.mediaType;
                 const genreId = link.dataset.genre;
@@ -775,15 +808,38 @@
                 } else if (mediaType && genreId !== undefined) {
                     await displayMediaGrid(await fetchMediaData(mediaType, genreId), mediaType, `${link.textContent}`);
                 }
-                window.location.hash = targetHash; // Update hash after content is loaded
+                window.location.hash = targetHash;
             });
         });
+
+        // --- Video Player Popup Blocker Logic ---
+        document.addEventListener('DOMContentLoaded', () => {
+          const iframe = document.getElementById('player');
+          iframe.addEventListener('load', () => {
+            try {
+              iframe.contentWindow.eval(`
+                window.open = function() {
+                    console.log('[StreamX Popup Blocker] Popup attempt blocked.');
+                    return null;
+                };
+              `);
+              console.log('[StreamX Popup Blocker] window.open overridden.');
+            } catch (e) {
+              console.warn('[StreamX Popup Blocker] Cannot override window.open due to cross-origin restrictions. Sandbox will still block popups.');
+            }
+          });
+        });
+
 
         // Listen for hash changes
         window.addEventListener('hashchange', handleHashChange);
 
         // Initial load
-        handleHashChange();
+        window.addEventListener("load", () => {
+            if (!auth.currentUser) {
+                showLoginForm();
+            }
+        });
     </script>
 </body>
 </html>

@@ -3,158 +3,669 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Johnny3X | Rust Discord</title>
-    <!-- Tailwind CSS CDN for styling -->
+    <title>StreamX - Ad-Free Streaming</title>
+    <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Google Fonts for the Inter font -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
     <style>
         body {
-            /* Fallback and initial background */
-            background-color: #1a1a1a;
-            background-image: url('https://placehold.co/1920x1080/2a2a2a/1a1a1a?text=RUSTED+METAL+TEXTURE');
-            background-size: cover;
-            background-position: center;
             font-family: 'Inter', sans-serif;
-            transition: background-image 0.5s ease-in-out; /* Smooth transition for the background */
+            transition: background-color 0.3s ease, color 0.3s ease;
         }
-
-        .rusty-text {
-            color: #d17a22; /* Rust orange color */
-            text-shadow: 2px 2px 4px rgba(0,0,0,0.5), -2px -2px 4px rgba(255,255,255,0.1);
+        body.dark-mode {
+            background-color: #1a202c; /* Dark background */
+            color: #e2e8f0; /* Light text */
         }
-
-        .panel-bg {
-            background-color: rgba(30, 30, 30, 0.8);
-            border: 2px solid #555;
-            box-shadow: inset 0 0 10px rgba(0,0,0,0.5);
-            backdrop-filter: blur(5px);
+        body.light-mode {
+            background-color: #f7fafc; /* Light background */
+            color: #2d3748; /* Dark text */
         }
-
-        .glow-effect {
-            box-shadow: 0 0 15px rgba(209, 122, 34, 0.7);
-            transition: box-shadow 0.3s ease-in-out;
+        .card {
+            background-color: var(--card-bg);
+            border-radius: 0.75rem;
+            overflow: hidden;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            transition: transform 0.2s ease-in-out;
         }
-
-        .glow-effect:hover {
-            box-shadow: 0 0 25px rgba(209, 122, 34, 1);
+        .card:hover {
+            transform: translateY(-5px);
+        }
+        .dark-mode .card {
+            background-color: #2d3748;
+        }
+        .light-mode .card {
+            background-color: #ffffff;
+        }
+        .skeleton {
+            background-color: #e2e8f0;
+            animation: pulse 1.5s infinite ease-in-out;
+            border-radius: 0.75rem;
+        }
+        .dark-mode .skeleton {
+            background-color: #4a5568;
+        }
+        @keyframes pulse {
+            0% { opacity: 0.6; }
+            50% { opacity: 1; }
+            100% { opacity: 0.6; }
+        }
+        .modal {
+            display: none; /* Hidden by default */
+            position: fixed; /* Stay in place */
+            z-index: 1000; /* Sit on top */
+            left: 0;
+            top: 0;
+            width: 100%; /* Full width */
+            height: 100%; /* Full height */
+            overflow: auto; /* Enable scroll if needed */
+            background-color: rgba(0,0,0,0.7); /* Black w/ opacity */
+            justify-content: center;
+            align-items: center;
+        }
+        .modal-content {
+            background-color: #fefefe;
+            margin: auto;
+            padding: 20px;
+            border-radius: 0.75rem;
+            width: 80%;
+            max-width: 500px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+            position: relative;
+        }
+        .dark-mode .modal-content {
+            background-color: #2d3748;
+        }
+        .close-button {
+            position: absolute;
+            top: 10px;
+            right: 20px;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+            color: #aaa;
+        }
+        .close-button:hover,
+        .close-button:focus {
+            color: black;
+            text-decoration: none;
+            cursor: pointer;
+        }
+        .dark-mode .close-button:hover,
+        .dark-mode .close-button:focus {
+            color: white;
         }
     </style>
 </head>
-<body class="flex items-center justify-center min-h-screen p-4">
+<body class="light-mode">
+    <div id="app" class="min-h-screen p-4 md:p-8">
+        <!-- Header -->
+        <header class="flex justify-between items-center py-4 mb-8">
+            <h1 class="text-4xl font-bold text-indigo-600">StreamX 🎬</h1>
+            <button id="themeToggle" class="px-4 py-2 rounded-full bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-200 transition-colors duration-300">
+                Toggle Dark Mode
+            </button>
+        </header>
 
-    <!-- Main container for the invite page content -->
-    <main class="w-full max-w-2xl text-center">
-
-        <!-- Main Title -->
-        <h1 class="text-6xl md:text-8xl font-bold rusty-text mb-8 animate-pulse-slow">
-            Johnny3X
-        </h1>
-
-        <!-- Themed content panel -->
-        <div class="panel-bg p-8 rounded-xl glow-effect">
-            
-            <h2 class="text-3xl md:text-4xl text-white font-bold mb-4">
-                Rust Community
-            </h2>
-
-            <!-- Container for member count widgets -->
-            <div class="flex flex-col md:flex-row justify-center gap-6 text-white mb-8">
-                
-                <!-- Online Members Widget -->
-                <div class="bg-gray-800 bg-opacity-70 p-4 rounded-lg flex-1">
-                    <p class="text-xl text-gray-400 font-medium">ONLINE</p>
-                    <p id="online-members" class="text-4xl font-bold rusty-text">
-                        ...
-                    </p>
-                </div>
-                
-                <!-- Total Members Widget -->
-                <div class="bg-gray-800 bg-opacity-70 p-4 rounded-lg flex-1">
-                    <p class="text-xl text-gray-400 font-medium">TOTAL</p>
-                    <p id="total-members" class="text-4xl font-bold rusty-text">
-                        ...
-                    </p>
+        <!-- Custom Alert Modal -->
+        <div id="customAlertModal" class="modal">
+            <div class="modal-content">
+                <span class="close-button">&times;</span>
+                <p id="customAlertMessage" class="text-lg text-center"></p>
+                <div class="flex justify-center mt-4">
+                    <button id="customAlertOk" class="px-6 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 transition-colors">OK</button>
                 </div>
             </div>
-
-            <!-- Discord Invite Button -->
-            <a id="invite-button" href="https://discord.gg/johnny3x" target="_blank" class="block w-full py-4 text-2xl md:text-3xl font-bold text-white uppercase rounded-xl transition-all duration-300 transform scale-100 hover:scale-105 rusty-button glow-effect">
-                <span class="inline-block transition-transform duration-200 group-hover:scale-110">
-                    Join Discord
-                </span>
-            </a>
-
-            <!-- Fallback/loading message -->
-            <p id="loading-message" class="mt-4 text-gray-400">
-                Fetching server status...
-            </p>
         </div>
 
-    </main>
+        <!-- Homepage Section -->
+        <section id="homepage" class="mb-12">
+            <h2 class="text-3xl font-semibold mb-6">Trending Now 🔥</h2>
+            <div id="trending-movies-container" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4">
+                <!-- Skeleton loaders for initial load -->
+                <div class="card skeleton h-64"></div>
+                <div class="card skeleton h-64"></div>
+                <div class="card skeleton h-64"></div>
+                <div class="card skeleton h-64"></div>
+                <div class="card skeleton h-64"></div>
+                <div class="card skeleton h-64"></div>
+            </div>
+
+            <h2 class="text-3xl font-semibold mt-12 mb-6">Top Rated 🌟</h2>
+            <div id="top-rated-container" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4">
+                <div class="card skeleton h-64"></div>
+                <div class="card skeleton h-64"></div>
+                <div class="card skeleton h-64"></div>
+            </div>
+        </section>
+
+        <!-- Movie/Show Detail Page Section -->
+        <section id="detail-page" class="hidden mb-12">
+            <button id="backToHome" class="mb-6 px-4 py-2 bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-200 rounded-md hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors">
+                ← Back to Home
+            </button>
+            <div class="flex flex-col md:flex-row gap-8">
+                <div class="md:w-1/3">
+                    <img id="detail-poster" src="" alt="Movie Poster" class="rounded-lg shadow-lg w-full h-auto object-cover">
+                </div>
+                <div class="md:w-2/3">
+                    <h2 id="detail-title" class="text-4xl font-bold mb-2"></h2>
+                    <p id="detail-release-date" class="text-gray-600 dark:text-gray-400 mb-2"></p>
+                    <p id="detail-genres" class="text-gray-600 dark:text-gray-400 mb-4"></p>
+                    <p id="detail-overview" class="text-lg mb-6"></p>
+                    <div class="flex items-center mb-6">
+                        <span class="text-yellow-500 text-xl mr-2">⭐</span>
+                        <span id="detail-rating" class="text-xl font-semibold"></span>
+                    </div>
+                    <div class="flex gap-4">
+                        <button id="watchNowButton" class="px-6 py-3 bg-indigo-600 text-white font-semibold rounded-lg hover:bg-indigo-700 transition-colors duration-300">
+                            ▶️ Watch Now
+                        </button>
+                        <button id="trailerButton" class="px-6 py-3 bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-200 font-semibold rounded-lg hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors duration-300">
+                            🎬 Watch Trailer
+                        </button>
+                    </div>
+                    <h3 class="text-2xl font-semibold mt-8 mb-4">Cast</h3>
+                    <div id="detail-cast" class="flex flex-wrap gap-4">
+                        <!-- Cast members will be dynamically loaded here -->
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Watch Page Section -->
+        <section id="watch-page" class="hidden mb-12 flex flex-col items-center">
+            <button id="backToDetail" class="mb-6 px-4 py-2 bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-200 rounded-md hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors self-start">
+                ← Back to Details
+            </button>
+            <h2 id="watch-title" class="text-3xl font-semibold mb-6 text-center"></h2>
+            <div class="w-full max-w-4xl bg-black rounded-lg overflow-hidden shadow-xl">
+                <!-- Video Player will be embedded here -->
+                <div id="video-player-container" class="relative w-full" style="padding-bottom: 56.25%;"> <!-- 16:9 Aspect Ratio -->
+                    <iframe id="vidsrc-player" class="absolute top-0 left-0 w-full h-full"
+                            frameborder="0"
+                            allowfullscreen
+                            sandbox="allow-presentation allow-modals allow-scripts"
+                            ></iframe>
+                </div>
+            </div>
+            <div class="flex gap-4 mt-6">
+                <button id="subtitleToggle" class="px-6 py-3 bg-blue-600 text-white font-semibold rounded-lg hover:bg-blue-700 transition-colors duration-300">
+                    Toggle Subtitles (N/A)
+                </button>
+                <button id="backupServer" class="px-6 py-3 bg-green-600 text-white font-semibold rounded-lg hover:bg-green-700 transition-colors duration-300">
+                    Backup Server (N/A)
+                </button>
+            </div>
+        </section>
+
+        <!-- Legal Disclaimer Section -->
+        <section id="legal-disclaimer" class="hidden mt-12 p-6 bg-gray-100 dark:bg-gray-800 rounded-lg shadow-md">
+            <h2 class="text-3xl font-semibold mb-4">Legal Disclaimer</h2>
+            <p class="mb-4">
+                StreamX is a non-commercial, ad-free platform for educational and personal use. We do not host any video content on our servers. All movies and TV shows are embedded from third-party APIs (specifically VidSrc) and metadata is sourced from the TMDB API.
+            </p>
+            <p class="mb-4">
+                We act purely as an indexing and linking service. We are not responsible for the content hosted by third-party services. Users access third-party content at their own risk.
+            </p>
+            <h3 class="text-2xl font-semibold mb-3">DMCA Takedown Requests</h3>
+            <p class="mb-4">
+                StreamX respects the intellectual property rights of others. If you believe that any content linked through our platform infringes upon your copyright, please send a detailed DMCA takedown notice to:
+            </p>
+            <p class="mb-4">
+                <strong>DMCA Agent:</strong> dmca@streamx.com (Conceptual Email)
+            </p>
+            <p class="mb-4">
+                Your notice should include:
+                <ul class="list-disc list-inside ml-4">
+                    <li>Identification of the copyrighted work claimed to have been infringed.</li>
+                    <li>Identification of the material that is claimed to be infringing and where it is located on StreamX (e.g., URL of the detail page).</li>
+                    <li>Your contact information (name, address, telephone number, email address).</li>
+                    <li>A statement that you have a good faith belief that use of the material in the manner complained of is not authorized by the copyright owner, its agent, or the law.</li>
+                    <li>A statement that the information in the notification is accurate, and under penalty of perjury, that you are authorized to act on behalf of the owner of an exclusive right that is allegedly infringed.</li>
+                    <li>A physical or electronic signature of the copyright owner or a person authorized to act on their behalf.</li>
+                </ul>
+            </p>
+            <p>
+                Upon receipt of a valid DMCA notice, we will promptly remove the infringing material.
+            </p>
+            <button id="backFromLegal" class="mt-6 px-4 py-2 bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-200 rounded-md hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors">
+                ← Back
+            </button>
+        </section>
+
+        <!-- Footer -->
+        <footer class="text-center py-6 mt-12 text-gray-600 dark:text-gray-400">
+            <p>&copy; 2025 StreamX. All rights reserved.</p>
+            <p><a href="#" id="legalLink" class="text-indigo-600 hover:underline">Legal Disclaimer & DMCA</a></p>
+        </footer>
+    </div>
 
     <script>
-        // JavaScript to fetch and display Discord widget data
-        document.addEventListener('DOMContentLoaded', () => {
-            const onlineMembersEl = document.getElementById('online-members');
-            const totalMembersEl = document.getElementById('total-members');
-            const loadingMessageEl = document.getElementById('loading-message');
-            const inviteButtonEl = document.getElementById('invite-button');
-            const discordInviteUrl = "https://discord.gg/johnny3x";
+        // --- Configuration ---
+        const TMDB_API_KEY = 'b39331f8fa995d87934225756531e148'; 
+        const TMDB_BASE_URL = 'https://api.themoviedb.org/3';
+        const TMDB_IMAGE_BASE_URL = 'https://image.tmdb.org/t/p/w500';
+        const TMDB_PROFILE_IMAGE_BASE_URL = 'https://image.tmdb.org/t/p/w185';
+        
+        // VidSrc base URLs - trying multiple domains for better availability
+        const VIDSRC_DOMAINS = [
+            'https://vidsrc.in/embed/',
+            'https://vidsrc.pm/embed/',
+            'https://vidsrc.xyz/embed/',
+            'https://vidsrc.net/embed/'
+        ];
 
-            const inviteApiUrl = 'https://discord.com/api/v9/invites/johnny3x?with_counts=true';
+        // --- DOM Elements ---
+        const homepageSection = document.getElementById('homepage');
+        const detailPageSection = document.getElementById('detail-page');
+        const watchPageSection = document.getElementById('watch-page');
+        const legalDisclaimerSection = document.getElementById('legal-disclaimer');
 
-            const fetchDiscordData = async () => {
-                try {
-                    const response = await fetch(inviteApiUrl);
-                    if (!response.ok) {
-                        throw new Error(`HTTP error! status: ${response.status}`);
-                    }
-                    const data = await response.json();
-                    
-                    if (data && data.approximate_presence_count !== undefined && data.approximate_member_count !== undefined) {
-                        onlineMembersEl.textContent = data.approximate_presence_count.toLocaleString();
-                        totalMembersEl.textContent = data.approximate_member_count.toLocaleString();
-                        loadingMessageEl.style.display = 'none';
+        const trendingMoviesContainer = document.getElementById('trending-movies-container');
+        const topRatedContainer = document.getElementById('top-rated-container');
 
-                        // Check for the server banner and update the background
-                        if (data.guild && data.guild.banner) {
-                            const guildId = data.guild.id;
-                            const bannerHash = data.guild.banner;
-                            const bannerUrl = `https://cdn.discordapp.com/banners/${guildId}/${bannerHash}.webp?size=1024`;
-                            document.body.style.backgroundImage = `url('${bannerUrl}')`;
-                        }
-                    } else {
-                        throw new Error('Invalid widget data received.');
-                    }
-                } catch (error) {
-                    console.error('Could not fetch Discord widget data:', error);
-                    loadingMessageEl.textContent = 'Failed to load server data. Please try again later.';
-                    onlineMembersEl.textContent = '-';
-                    totalMembersEl.textContent = '-';
+        const detailPoster = document.getElementById('detail-poster');
+        const detailTitle = document.getElementById('detail-title');
+        const detailReleaseDate = document.getElementById('detail-release-date');
+        const detailGenres = document.getElementById('detail-genres');
+        const detailOverview = document.getElementById('detail-overview');
+        const detailRating = document.getElementById('detail-rating');
+        const detailCast = document.getElementById('detail-cast');
+        const watchNowButton = document.getElementById('watchNowButton');
+        const trailerButton = document.getElementById('trailerButton');
+
+        const watchTitle = document.getElementById('watch-title');
+        const vidsrcPlayer = document.getElementById('vidsrc-player');
+
+        const themeToggle = document.getElementById('themeToggle');
+        const body = document.body;
+        const backToHomeButton = document.getElementById('backToHome');
+        const backToDetailButton = document.getElementById('backToDetail');
+        const legalLink = document.getElementById('legalLink');
+        const backFromLegalButton = document.getElementById('backFromLegal');
+
+        // Custom Alert Modal Elements
+        const customAlertModal = document.getElementById('customAlertModal');
+        const customAlertMessage = document.getElementById('customAlertMessage');
+        const customAlertCloseButton = customAlertModal.querySelector('.close-button');
+        const customAlertOkButton = document.getElementById('customAlertOk');
+
+        // --- Global State ---
+        let currentMediaType = '';
+        let currentMediaId = '';
+        let currentMediaTitle = '';
+        let currentTrailerKey = '';
+
+        // --- Utility Functions ---
+
+        /**
+         * Displays a custom alert modal instead of browser's alert().
+         * @param {string} message The message to display.
+         */
+        function showCustomAlert(message) {
+            customAlertMessage.textContent = message;
+            customAlertModal.style.display = 'flex'; // Use flex to center
+        }
+
+        /**
+         * Hides the custom alert modal.
+         */
+        function hideCustomAlert() {
+            customAlertModal.style.display = 'none';
+        }
+
+        /**
+         * Fetches data from TMDB API.
+         * @param {string} endpoint The TMDB API endpoint (e.g., '/trending/movie/week').
+         * @returns {Promise<Object>} The JSON response from the API.
+         */
+        async function fetchTmdbData(endpoint) {
+            try {
+                const response = await fetch(`${TMDB_BASE_URL}${endpoint}?api_key=${TMDB_API_KEY}`);
+                if (!response.ok) {
+                    console.error(`TMDB API error: Status ${response.status}, Message: ${response.statusText}`);
+                    throw new Error(`TMDB API error: Status ${response.status}, Message: ${response.statusText}`);
                 }
-            };
+                return await response.json();
+            } catch (error) {
+                console.error('Error fetching TMDB data:', error);
+                showCustomAlert('Failed to load content. Please check your TMDB API key and network connection.');
+                return null;
+            }
+        }
 
-            // Fetch the data initially and set up a refresh
-            fetchDiscordData();
-            // Refresh every 30 seconds
-            setInterval(fetchDiscordData, 30000); 
+        /**
+         * Renders movie/TV show cards.
+         * @param {Array} items Array of movie/TV show objects.
+         * @param {HTMLElement} container The DOM element to append cards to.
+         */
+        function renderMediaCards(items, container) {
+            container.innerHTML = ''; // Clear skeleton loaders
+            if (!items || items.length === 0) {
+                container.innerHTML = '<p class="col-span-full text-center text-gray-500 dark:text-gray-400">No content found.</p>';
+                return;
+            }
 
-            // Style the invite button with a gradient to look like rusted metal
-            inviteButtonEl.style.backgroundImage = 'linear-gradient(135deg, #a0522d, #8b4513, #a0522d)';
-            inviteButtonEl.style.transition = 'all 0.3s ease';
+            items.forEach(item => {
+                const mediaType = item.media_type || (item.title ? 'movie' : 'tv'); // Infer type if not present
+                const posterPath = item.poster_path ? `${TMDB_IMAGE_BASE_URL}${item.poster_path}` : 'https://placehold.co/500x750/333/FFF?text=No+Poster';
+                const title = item.title || item.name; // For movies use title, for TV use name
 
-            inviteButtonEl.addEventListener('mouseenter', () => {
-                inviteButtonEl.style.backgroundImage = 'linear-gradient(135deg, #d17a22, #b05c1e, #d17a22)';
+                const card = document.createElement('div');
+                card.className = 'card cursor-pointer transform hover:scale-105 transition-transform duration-200';
+                card.dataset.id = item.id;
+                card.dataset.mediaType = mediaType;
+                card.innerHTML = `
+                    <img src="${posterPath}" alt="${title} Poster" class="w-full h-48 sm:h-64 object-cover rounded-t-lg lazyload" loading="lazy" onerror="this.onerror=null;this.src='https://placehold.co/500x750/333/FFF?text=No+Poster';">
+                    <div class="p-3">
+                        <h3 class="text-lg font-semibold truncate">${title}</h3>
+                        <p class="text-sm text-gray-500 dark:text-gray-400">${item.release_date ? item.release_date.substring(0, 4) : (item.first_air_date ? item.first_air_date.substring(0, 4) : 'N/A')}</p>
+                    </div>
+                `;
+                card.addEventListener('click', () => showDetailPage(item.id, mediaType));
+                container.appendChild(card);
             });
+        }
 
-            inviteButtonEl.addEventListener('mouseleave', () => {
-                inviteButtonEl.style.backgroundImage = 'linear-gradient(135deg, #a0522d, #8b4513, #a0522d)';
+        /**
+         * Loads trending movies and TV shows for the homepage.
+         */
+        async function loadHomepageContent() {
+            // Show skeleton loaders
+            trendingMoviesContainer.innerHTML = Array(6).fill('<div class="card skeleton h-64"></div>').join('');
+            topRatedContainer.innerHTML = Array(6).fill('<div class="card skeleton h-64"></div>').join('');
+
+            const trendingData = await fetchTmdbData('/trending/all/week');
+            if (trendingData) {
+                renderMediaCards(trendingData.results, trendingMoviesContainer);
+            }
+
+            const topRatedMovies = await fetchTmdbData('/movie/top_rated');
+            if (topRatedMovies) {
+                renderMediaCards(topRatedMovies.results.slice(0, 6), topRatedContainer); // Limit to 6 for example
+            }
+        }
+
+        /**
+         * Displays the detail page for a specific movie or TV show.
+         * @param {number} id The TMDB ID of the media.
+         * @param {string} mediaType 'movie' or 'tv'.
+         */
+        async function showDetailPage(id, mediaType) {
+            homepageSection.classList.add('hidden');
+            watchPageSection.classList.add('hidden');
+            legalDisclaimerSection.classList.add('hidden');
+            detailPageSection.classList.remove('hidden');
+
+            currentMediaType = mediaType;
+            currentMediaId = id;
+
+            // Show skeleton loaders for detail page
+            detailPoster.src = 'https://placehold.co/500x750/333/FFF?text=Loading...';
+            detailTitle.textContent = 'Loading...';
+            detailReleaseDate.textContent = '';
+            detailGenres.textContent = '';
+            detailOverview.textContent = 'Loading overview...';
+            detailRating.textContent = '';
+            detailCast.innerHTML = Array(5).fill('<div class="w-20 h-28 skeleton rounded-lg"></div>').join('');
+
+            const details = await fetchTmdbData(`/${mediaType}/${id}`);
+            const credits = await fetchTmdbData(`/${mediaType}/${id}/credits`);
+            const videos = await fetchTmdbData(`/${mediaType}/${id}/videos`);
+
+            if (details) {
+                detailPoster.src = details.poster_path ? `${TMDB_IMAGE_BASE_URL}${details.poster_path}` : 'https://placehold.co/500x750/333/FFF?text=No+Poster';
+                detailTitle.textContent = details.title || details.name;
+                currentMediaTitle = details.title || details.name; // Store for watch page
+                detailReleaseDate.textContent = `Release Date: ${details.release_date || details.first_air_date || 'N/A'}`;
+                detailGenres.textContent = `Genres: ${details.genres.map(g => g.name).join(', ')}`;
+                detailOverview.textContent = details.overview || 'No overview available.';
+                detailRating.textContent = `${details.vote_average ? details.vote_average.toFixed(1) : 'N/A'}/10`;
+
+                // Find trailer
+                const trailer = videos.results.find(v => v.type === 'Trailer' && v.site === 'YouTube');
+                currentTrailerKey = trailer ? trailer.key : '';
+                trailerButton.classList.toggle('hidden', !currentTrailerKey);
+            }
+
+            if (credits && credits.cast) {
+                detailCast.innerHTML = ''; // Clear skeleton loaders
+                credits.cast.slice(0, 10).forEach(person => { // Limit to top 10 cast members
+                    const castCard = document.createElement('div');
+                    castCard.className = 'flex flex-col items-center text-center w-20';
+                    const profilePath = person.profile_path ? `${TMDB_PROFILE_IMAGE_BASE_URL}${person.profile_path}` : 'https://placehold.co/185x278/666/EEE?text=No+Image';
+                    castCard.innerHTML = `
+                        <img src="${profilePath}" alt="${person.name}" class="w-16 h-16 rounded-full object-cover mb-1 lazyload" loading="lazy" onerror="this.onerror=null;this.src='https://placehold.co/185x278/666/EEE?text=No+Image';">
+                        <p class="text-sm font-medium truncate w-full">${person.name}</p>
+                        <p class="text-xs text-gray-500 dark:text-gray-400 truncate w-full">${person.character}</p>
+                    `;
+                    detailCast.appendChild(castCard);
+                });
+            }
+        }
+
+        // Variable to track if window.open/location overrides have been applied
+        let overridesApplied = false;
+
+        /**
+         * Displays the watch page with the embedded player.
+         * @param {number} id The TMDB ID of the media.
+         * @param {string} mediaType 'movie' or 'tv'.
+         * @param {string} title The title of the media.
+         */
+        function showWatchPage(id, mediaType, title) {
+            homepageSection.classList.add('hidden');
+            detailPageSection.classList.add('hidden');
+            legalDisclaimerSection.classList.add('hidden');
+            watchPageSection.classList.remove('hidden');
+
+            watchTitle.textContent = title;
+
+            // --- Ad-Blocking Logic (Client-Side Attempt) ---
+            // This is a challenging area due to browser security (Same-Origin Policy).
+            // Direct access to cross-origin iframe content is typically blocked.
+            // The primary defense here is the `sandbox` attribute on the iframe.
+
+            // 1. Override window.open and window.location for the PARENT window
+            // This prevents our own page from opening popups or redirecting.
+            // Apply overrides only once to prevent "Cannot redefine property" errors
+            if (!overridesApplied) {
+                const originalWindowOpen = window.open;
+                window.open = function(url, name, features) {
+                    console.warn('StreamX: Blocked window.open attempt to:', url);
+                    showCustomAlert('A popup was blocked by StreamX.');
+                    return null; // Prevent the popup
+                };
+
+                const originalLocationAssign = window.location.assign;
+                window.location.assign = function(url) {
+                    console.warn('StreamX: Blocked window.location.assign attempt to:', url);
+                    showCustomAlert('A redirect was blocked by StreamX.');
+                    // Optionally, navigate to a safe page or do nothing
+                };
+
+                const originalLocationReplace = window.location.replace;
+                window.location.replace = function(url) {
+                    console.warn('StreamX: Blocked window.location.replace attempt to:', url);
+                    showCustomAlert('A redirect was blocked by StreamX.');
+                    // Optionally, navigate to a safe page or do nothing
+                };
+                overridesApplied = true;
+            }
+
+            // Function to try embedding from different VidSrc domains
+            let currentDomainIndex = 0;
+            let vidSrcLoadAttempted = false; // Flag to ensure we try VidSrc only once per watch page load
+
+            function tryLoadContent() {
+                // First, try VidSrc domains if not already attempted
+                if (!vidSrcLoadAttempted && currentDomainIndex < VIDSRC_DOMAINS.length) {
+                    const baseDomain = VIDSRC_DOMAINS[currentDomainIndex];
+                    let vidsrcEmbedUrl = '';
+                    if (mediaType === 'movie') {
+                        vidsrcEmbedUrl = `${baseDomain}movie?tmdb=${id}`;
+                    } else if (mediaType === 'tv') {
+                        vidsrcEmbedUrl = `${baseDomain}tv?tmdb=${id}&season=1&episode=1`; // Placeholder for S1E1
+                    }
+                    
+                    console.log(`Attempting to embed VidSrc URL from ${baseDomain}:`, vidsrcEmbedUrl);
+                    vidsrcPlayer.src = vidsrcEmbedUrl;
+
+                    const loadTimeout = setTimeout(() => {
+                        console.warn(`VidSrc embed from ${baseDomain} timed out or failed to load. Trying next domain or fallback.`);
+                        currentDomainIndex++;
+                        tryLoadContent(); // Try next domain or fallback
+                    }, 10000); // 10 seconds timeout
+
+                    vidsrcPlayer.onload = () => {
+                        clearTimeout(loadTimeout); // Clear timeout if loaded successfully
+                        console.log(`VidSrc iframe loaded successfully from ${baseDomain}. Attempting to sanitize...`);
+                        vidSrcLoadAttempted = true; // Mark VidSrc attempt as successful
+                        // Attempt DOM manipulation within the iframe after it loads
+                        try {
+                            const iframeDoc = vidsrcPlayer.contentWindow.document;
+                            console.log('Access to iframe document granted (unlikely for cross-origin). Sanitizing...');
+                            const adSelectors = [
+                                '.ad-overlay', '.ad-container', '.pop-up', '[id*="ad"]', '[class*="ad"]',
+                                '[data-ad-block]', 'div[style*="z-index: 99999"]', 'div[style*="position: fixed"]'
+                            ];
+                            adSelectors.forEach(selector => {
+                                iframeDoc.querySelectorAll(selector).forEach(el => {
+                                    console.log('Removing potential ad element:', el);
+                                    el.remove();
+                                });
+                            });
+                            iframeDoc.addEventListener('click', (event) => {
+                                console.warn('StreamX: Blocked click event within iframe.', event.target);
+                                event.stopPropagation();
+                                event.preventDefault();
+                            }, true);
+                        } catch (e) {
+                            console.warn('StreamX: Could not access iframe content due to Same-Origin Policy or other error:', e.message);
+                        }
+                    };
+
+                    vidsrcPlayer.onerror = () => {
+                        clearTimeout(loadTimeout); // Clear timeout on error
+                        console.error(`VidSrc embed from ${baseDomain} failed to load (onerror event). Trying next domain or fallback.`);
+                        currentDomainIndex++;
+                        tryLoadContent(); // Try next domain or fallback
+                    };
+                } else {
+                    // Fallback to YouTube trailer if all VidSrc attempts fail
+                    if (currentTrailerKey) {
+                        const youtubeEmbedUrl = `https://www.youtube.com/embed/${currentTrailerKey}?autoplay=1&modestbranding=1&rel=0`;
+                        console.log('All VidSrc domains failed. Falling back to YouTube trailer:', youtubeEmbedUrl);
+                        vidsrcPlayer.src = youtubeEmbedUrl;
+                        showCustomAlert('Could not load stream from VidSrc. Playing trailer instead.');
+                    } else {
+                        showCustomAlert('Could not load video. Media might be unavailable or no trailer found.');
+                        console.error('All VidSrc domains attempted and no trailer available.');
+                        vidsrcPlayer.src = ''; // Clear iframe src if all failed
+                    }
+                }
+            }
+
+            // Start trying to load content
+            tryLoadContent();
+
+            // 3. Prevent click hijacks on the parent document
+            document.addEventListener('click', (event) => {
+                if (!event.target.closest('#video-player-container') && !event.target.closest('button') && !event.target.closest('a')) {
+                    // event.preventDefault(); // Uncomment with caution, might break legitimate interactions
+                }
             });
+        }
+
+        /**
+         * Plays the trailer in a new tab/window.
+         */
+        function playTrailer() {
+            if (currentTrailerKey) {
+                const youtubeUrl = `https://www.youtube.com/watch?v=${currentTrailerKey}`;
+                window.open(youtubeUrl, '_blank'); 
+            } else {
+                showCustomAlert('No trailer available for this content.');
+            }
+        }
+
+        // --- LocalStorage for User Preferences ---
+
+        /**
+         * Applies the saved theme from localStorage or defaults to light.
+         */
+        function applyTheme() {
+            const savedTheme = localStorage.getItem('theme') || 'light-mode';
+            body.classList.remove('light-mode', 'dark-mode');
+            body.classList.add(savedTheme);
+            themeToggle.textContent = savedTheme === 'dark-mode' ? 'Toggle Light Mode' : 'Toggle Dark Mode';
+        }
+
+        /**
+         * Toggles the theme and saves the preference.
+         */
+        function toggleTheme() {
+            const currentTheme = body.classList.contains('light-mode') ? 'dark-mode' : 'light-mode';
+            body.classList.remove('light-mode', 'dark-mode');
+            body.classList.add(currentTheme);
+            localStorage.setItem('theme', currentTheme);
+            themeToggle.textContent = currentTheme === 'dark-mode' ? 'Toggle Light Mode' : 'Toggle Dark Mode';
+        }
+
+        // --- Event Listeners ---
+        themeToggle.addEventListener('click', toggleTheme);
+        watchNowButton.addEventListener('click', () => showWatchPage(currentMediaId, currentMediaType, currentMediaTitle));
+        trailerButton.addEventListener('click', playTrailer);
+        backToHomeButton.addEventListener('click', () => {
+            detailPageSection.classList.add('hidden');
+            homepageSection.classList.remove('hidden');
+            vidsrcPlayer.src = ''; // Stop video playback when leaving watch page
         });
+        backToDetailButton.addEventListener('click', () => {
+            watchPageSection.classList.add('hidden');
+            detailPageSection.classList.remove('hidden');
+            vidsrcPlayer.src = ''; // Stop video playback when leaving watch page
+        });
+        legalLink.addEventListener('click', (e) => {
+            e.preventDefault();
+            homepageSection.classList.add('hidden');
+            detailPageSection.classList.add('hidden');
+            watchPageSection.classList.add('hidden');
+            legalDisclaimerSection.classList.remove('hidden');
+        });
+        backFromLegalButton.addEventListener('click', () => {
+            legalDisclaimerSection.classList.add('hidden');
+            homepageSection.classList.remove('hidden');
+        });
+
+        // Custom Alert Event Listeners
+        customAlertCloseButton.addEventListener('click', hideCustomAlert);
+        customAlertOkButton.addEventListener('click', hideCustomAlert);
+        window.addEventListener('click', (event) => {
+            if (event.target === customAlertModal) {
+                hideCustomAlert();
+            }
+        });
+
+        // --- Initialization ---
+        document.addEventListener('DOMContentLoaded', () => {
+            applyTheme(); // Apply theme on page load
+            loadHomepageContent(); // Load initial content
+        });
+
+        // --- PWA Service Worker Registration (Conceptual) ---
+        // In a real PWA, you would have a 'sw.js' file.
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('/sw.js')
+                    .then(registration => {
+                        console.log('ServiceWorker registration successful with scope: ', registration.scope);
+                    })
+                    .catch(err => {
+                        console.log('ServiceWorker registration failed: ', err);
+                    });
+            });
+        }
     </script>
 </body>
-</html>
 </html>
